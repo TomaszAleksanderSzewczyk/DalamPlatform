@@ -1,5 +1,6 @@
-import { connectToDatabase } from "../../lib/db";
+import { connectToDatabase } from "../../../lib/db";
 import nc from "next-connect";
+import { getSession } from "next-auth/react";
 
 export default nc()
   .get(async (req, res) => {
@@ -16,18 +17,13 @@ export default nc()
 
     const teamsCollection = client.db().collection("teams");
 
-    const team = await teamsCollection.findOne({ id });
-
-    if (!team) {
-      res.status(404).json({ message: "Team not found." });
-      client.close();
-      return;
-    }
+    const teams = await teamsCollection.find().toArray();
 
     client.close();
     res.status(200).json(team);
   })
   .post(async (req, res) => {
+    console.log("TEST");
     const session = await getSession({ req: req });
 
     if (!session) {
@@ -37,29 +33,50 @@ export default nc()
 
     const email = session.user.email;
     const name = req.body.name;
+    const description = req.body.description;
 
     const client = await connectToDatabase();
+    // console.log(client);
 
+    console.log("test");
     const usersCollection = client.db().collection("users");
+    const teamsCollection = client.db().collection("teams");
+    console.log("test2");
 
     const user = await usersCollection.findOne({ email });
 
     if (user.team) {
-      res.status(400).json({ message: "User already has a team" });
+      res.status(400).json({ message: "User already has a team!" });
       client.close();
       return;
     }
 
-    const result = await db.collection("teams").insertOne({
+    const team = await teamsCollection.findOne({ name });
+
+    if (user.team) {
+      res.status(400).json({ message: "Team with this name already exists!" });
+      client.close();
+      return;
+    }
+    console.log("test3");
+
+    const result = await teamsCollection.insertOne({
       name,
-      owner: email,
+      owner: user._id,
+      description,
     });
+    console.log("test4");
+
+    console.log(result);
     await usersCollection.updateOne(
       { email },
       {
-        team: result._id,
+        $set: {
+          team: result.insertedId,
+        },
       }
     );
+    console.log("test5");
     client.close();
     res.status(200).json(result);
   });

@@ -1,235 +1,141 @@
-import * as React from "react";
+import { getSession, signIn } from "next-auth/react";
 
-import {
-  Box,
-  Button,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-import Container from "@mui/material/Container";
-import Alert from "@mui/material/Alert";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Link as LinkRouter, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useUserAuth } from "../context/UserAuthContext";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { useCallback } from "react";
-import { createUserWithEmailAndPassword } from "@firebase/auth";
-import { auth, db } from "../firebase";
-import { Controller, useForm } from "react-hook-form";
-import { signUpErrorMessages } from "../utils/firebaseErrores";
-import {
-  addDoc,
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-} from "firebase/firestore";
-const theme = createTheme();
-export default function SignUp() {
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
-  const checkedIcon = <CheckBoxIcon fontSize='small' />;
-  const navigate = useNavigate();
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+async function createUser(email, password) {
+  const response = await fetch("/api/auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Something went wrong!");
+  }
+
+  return data;
+}
+
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const { signUp } = useUserAuth();
-  const [technologies, setTechnologies] = useState([]);
-  console.log("technologies", technologies[0]);
-  const [showPassword, setShowPassword] = useState(false);
-  const {
-    handleSubmit,
-    control,
-    formState,
-    formState: { errors },
-    setError,
-    clearErrors,
-  } = useForm();
+  const [error, setError] = useState("");
 
-  const onSubmit = async (data) => {
-    await createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCred) => {
-        const user = {
-          uid: userCred.user.uid,
-          firstName: "",
-          email: userCred.user.email,
-          phone: "",
-          location: "",
-          technologies: [],
-        };
-        setDoc(doc(db, "users", userCred.user.uid), user);
-        navigate("/");
-      })
-      .catch((error) => {
-        setError("nonFieldError", {
-          type: "server",
-          message: signUpErrorMessages(error.code),
-        });
-        setTimeout(clearErrors, 3000);
-      });
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  const testRegister = false;
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        router.replace("/");
+      } else {
+        setIsLoading(false);
+      }
+    });
+  }, [router]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const result = await createUser(email, password);
+    console.log(result);
+
+    if (!result.error) {
+      // set some auth state
+      router.replace("/login");
+    }
+
+    if (result.error) {
+      setError(result.error);
+    }
+    return;
   };
 
-  const array = [];
-
   return (
-    <Box>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <FormControl>
-            <InputLabel htmlFor={"email-input"}>Email</InputLabel>
-            <Controller
-              name={"email"}
-              control={control}
-              defaultValue={""}
-              rules={{ required: "Email is required" }}
-              render={({ field: { onChange, value } }) => (
-                <OutlinedInput
-                  id={"email-input"}
-                  type={"email"}
-                  label={"Email"}
-                  value={value}
-                  onChange={onChange}
-                />
-              )}
-            />
-            {errors.email && (
-              <Typography color={"error.main"} component={"span"}>
-                {errors.email.message}
-              </Typography>
-            )}
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor={"first-name-input"}>First Name</InputLabel>
-            <Controller
-              name={"first-name"}
-              control={control}
-              defaultValue={""}
-              rules={{ required: "First name is required" }}
-              render={({ field: { onChange, value } }) => (
-                <OutlinedInput
-                  id={"first-name-input"}
-                  type={"firstName"}
-                  label={"First Name"}
-                  value={value}
-                  onChange={onChange}
-                />
-              )}
-            />
-            {errors.firstName && (
-              <Typography color={"error.main"} component={"span"}>
-                {errors.firstName}
-              </Typography>
-            )}
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor={"last-name-input"}>Last Name</InputLabel>
-            <Controller
-              name={"last-name"}
-              control={control}
-              defaultValue={""}
-              rules={{ required: "Last Name is required" }}
-              render={({ field: { onChange, value } }) => (
-                <OutlinedInput
-                  id={"lastName"}
-                  type={"lastName"}
-                  label={"Last Name"}
-                  value={value}
-                  onChange={onChange}
-                />
-              )}
-            />
-            {errors.lastName && (
-              <Typography color={"error.main"} component={"span"}>
-                {errors.lastName.message}
-              </Typography>
-            )}
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor={"password-input"}>Hasło</InputLabel>
-            <Controller
-              name={"password"}
-              control={control}
-              defaultValue={""}
-              rules={{
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be min. 6 letters",
-                },
-              }}
-              render={({ field: { onChange, value } }) => (
-                <OutlinedInput
-                  id={"password-input"}
-                  type={showPassword ? "text" : "password"}
-                  label={"Password"}
-                  value={value}
-                  onChange={onChange}
-                  endAdornment={
-                    <InputAdornment position='end'>
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        onMouseDown={(e) => e.preventDefault()}
-                        edge='end'
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              )}
-            />
-            {errors.password && (
-              <Typography color={"error.main"} component={"span"}>
-                {errors.password.message}
-              </Typography>
-            )}
-          </FormControl>
-          {errors.nonFieldError && (
-            <Typography
-              textAlign={"center"}
-              color={"error.main"}
-              component={"span"}
-            >
-              {errors.nonFieldError.message}
-            </Typography>
-          )}
-          <FormControl>
-            <Button
-              variant={"contained"}
-              type={"submit"}
-              disabled={formState.isSubmitting}
-            >
-              Zarejestruj
-            </Button>
-          </FormControl>
-          <Button variant={"contained"} type={"submit"}>
-            <LinkRouter to='/' variant='body2'>
-              {"I have an account. Back to login"}
-            </LinkRouter>
+    <Container component='main' maxWidth='xs'>
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component='h1' variant='h5'>
+          Sign Up
+        </Typography>
+        {error && <Alert severity='error'>{error}</Alert>}
+        <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin='normal'
+            required
+            fullWidth
+            id='email'
+            label='Email Address'
+            name='email'
+            autoComplete='email'
+            autoFocus
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            margin='normal'
+            required
+            fullWidth
+            name='password'
+            label='Password'
+            type='password'
+            id='password'
+            autoComplete='current-password'
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <Button
+            type='submit'
+            disabled={isLoading}
+            fullWidth
+            variant='contained'
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign Up
           </Button>
-        </Stack>
-      </form>
-    </Box>
+          <Grid container>
+            <Grid item xs>
+              <Link href='#' variant='body2'>
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href='/login' variant='body2'>
+                {"I have an account. Go to Login."}
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+    </Container>
   );
 }
-const top100Films = [
-  { title: "JavaScript" },
-  { title: "Java" },
-  { title: "React" },
-  { title: "Assembly" },
-  { title: "Cobol" },
-  { title: "Allsls" },
-  { title: "Firebase" },
-];

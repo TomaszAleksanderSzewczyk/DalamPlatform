@@ -39,17 +39,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const testRegister = false;
 
   useEffect(() => {
     getSession().then((session) => {
+      console.log(session);
       if (session) {
-        router.replace("/");
-      } else {
-        setIsLoading(false);
+        router.push("/");
       }
     });
   }, [router]);
@@ -118,6 +117,7 @@ export default function Login() {
             autoComplete='current-password'
             onChange={(e) => setPassword(e.target.value)}
           />
+
           <FormControlLabel
             control={<Checkbox value='remember' color='primary' />}
             label='Remember me'
