@@ -1,6 +1,7 @@
 import { connectToDatabase } from "../../../lib/db";
 import nc from "next-connect";
 import { getSession } from "next-auth/react";
+import { ObjectId } from "mongodb";
 
 export default nc()
   .get(async (req, res) => {
@@ -17,7 +18,7 @@ export default nc()
 
     const teamsCollection = client.db().collection("teams");
 
-    const team = await teamsCollection.findOne({ id });
+    const team = await teamsCollection.findOne({ _id: new ObjectId(id) });
 
     if (!team) {
       res.status(404).json({ message: "Team not found." });
@@ -50,13 +51,24 @@ export default nc()
     const teamsCollection = client.db().collection("teams");
 
     const user = await usersCollection.findOne({ email });
-    const update = {};
+    const update = {
+      name,
+      description,
+      users,
+      technologies,
+    };
 
     if (name) {
+      console.log("name", name);
       update.name = name;
     }
 
+    if (description) {
+      console.log("description", description);
+      update.description = description;
+    }
     if (users) {
+      console.log("users");
       for (const user of users) {
         const userData = await usersCollection.findOne({ email: user });
 
@@ -69,12 +81,6 @@ export default nc()
         }
       }
       update.users = users;
-    }
-
-    if (user.team) {
-      res.status(400).json({ message: "User already has a team!" });
-      client.close();
-      return;
     }
 
     const team = await teamsCollection.findOne({ name });
@@ -92,6 +98,7 @@ export default nc()
     }
 
     if (technologies) {
+      console.log("technologies", technologies);
       update.technologies = technologies;
     }
 

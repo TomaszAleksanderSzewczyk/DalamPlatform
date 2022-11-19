@@ -22,11 +22,10 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import useUsers from "../../hooks/useUsers";
 import useUser from "../../hooks/useUser";
-import useTeams from "../../hooks/useUser";
+import useTeams from "../../hooks/useTeams";
 
 export default function TeamFormEdit({ properties }) {
   const [users, setUsers] = useState([]);
-  con;
   const { getAll } = useUsers();
   const { userData } = useUser();
   const { update, getOne } = useTeams();
@@ -38,6 +37,8 @@ export default function TeamFormEdit({ properties }) {
   const [isLoading, setIsLoading] = useState(true);
   const [description, setDescription] = useState("");
   const [technologies, setTechnologies] = useState([]);
+  const [chosenUsers, setChosenUsers] = useState([]);
+  console.log(chosenUsers);
   console.log(teamMembers);
   console.log(technologies);
   const router = useRouter();
@@ -45,23 +46,24 @@ export default function TeamFormEdit({ properties }) {
   useEffect(() => {
     getAll().then((data) => setUsers(data));
   }, []);
-
+  console.log(userData);
   useEffect(() => {
-    getOne(userData.team).then((data) => {
+    getOne(userData?.team).then((data) => {
       setDescription(data.description);
       setTeamMembers(data.users);
       setTeamName(data.name);
-      setTechnologies(data.technologies);
+      setTechnologies(technologies);
     });
-  }, [userData.team]);
+  }, [userData?.team]);
 
   const handleUpdate = (e) => {
     e.preventDefault();
+    console.log(chosenUsers);
     update(userData.team, {
-      users: teamMembers,
-      description,
       name: teamName,
-      // technologies,
+      users: chosenUsers,
+      description: description,
+      technologies,
     });
   };
 
@@ -107,18 +109,35 @@ export default function TeamFormEdit({ properties }) {
               id='description'
               onChange={(e) => setDescription(e.target.value)}
             />
+
             <Autocomplete
               fullWidth
-              disablePortal
-              value={teamMembers}
-              id='combo-box-demo'
-              //tutaj trzeba zfetchowac wszystkich czlonkow platformy jako options
+              value={chosenUsers}
+              onChange={(event, value) => setChosenUsers(value)}
+              multiple
+              id='checkboxes-tags-demo'
               options={emails}
-              renderInput={(params) => (
-                <TextField {...params} label='Add users' />
+              disableCloseOnSelect
+              getOptionLabel={(option) => option}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </li>
               )}
-              noOptionsText='No users with this name'
-              onChange={(event, value) => setTeamMembers(value)}
+              style={{ width: 500 }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label='Invite users to team'
+                  placeholder='Choose which users should be invited'
+                />
+              )}
             />
             <Autocomplete
               fullWidth
@@ -162,12 +181,4 @@ export default function TeamFormEdit({ properties }) {
       </Box>
     </Container>
   );
-}
-
-export async function getServerSideProps() {
-  const res = await fetch(`api/users`);
-  const data = await res.json();
-  console.log(data);
-  // Pass data to the page via props
-  return { props: { data } };
 }

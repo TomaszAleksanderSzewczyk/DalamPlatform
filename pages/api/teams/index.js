@@ -20,7 +20,7 @@ export default nc()
     const teams = await teamsCollection.find().toArray();
 
     client.close();
-    res.status(200).json(team);
+    res.status(200).json(teams);
   })
   .post(async (req, res) => {
     console.log("TEST");
@@ -34,7 +34,8 @@ export default nc()
     const email = session.user.email;
     const name = req.body.name;
     const description = req.body.description;
-
+    console.log("name:", name);
+    console.log("description", description);
     const client = await connectToDatabase();
     // console.log(client);
 
@@ -59,11 +60,11 @@ export default nc()
       return;
     }
     console.log("test3");
-
+    console.log("req body", req.body);
     const result = await teamsCollection.insertOne({
-      name,
+      name: name,
       owner: user._id,
-      description,
+      description: description,
     });
     console.log("test4");
 

@@ -14,13 +14,20 @@ const useTeamData = () => {
     return fetch(`/api/teams/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
-    }).then((res) => res.json());
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    }).then((res) => res.json(data));
   }, []);
 
   const create = useCallback((data) => {
     return fetch(`/api/teams`, {
       method: "POST",
       body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
     }).then((res) => res.json());
   }, []);
 

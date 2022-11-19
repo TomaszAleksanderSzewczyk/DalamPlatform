@@ -33,10 +33,12 @@ export default function CreateTeamForm({ properties }) {
   const checkedIcon = <CheckBoxIcon fontSize='small' />;
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
+  console.log(teamName);
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [description, setDescription] = useState("");
-
+  console.log(description);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function CreateTeamForm({ properties }) {
     e.preventDefault();
     create({
       name: teamName,
-      description,
+      description: description,
     })
       .then(() => refresh())
       .catch((e) => setError(e.message));
