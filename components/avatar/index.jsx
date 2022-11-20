@@ -1,8 +1,12 @@
 import useUserData from "../../hooks/useUser";
-
-export default function Avatar() {
+import styles from "../../styles/avatar.module.css"
+import Avatar  from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import { Button } from "@mui/material";
+import PortraitIcon from '@mui/icons-material/Portrait';
+export default function AvatarComponent() {
   const { update, userData } = useUserData();
-
+  
   const uploadPhoto = async (e) => {
     const file = e.target.files?.[0];
     const filename = encodeURIComponent(file.name)
@@ -22,7 +26,7 @@ export default function Avatar() {
       method: 'POST',
       body: formData,
     })
-    
+
     update({
       avatar: url + fields.key,
     })
@@ -35,15 +39,29 @@ export default function Avatar() {
   }
     return (
       <>
+      <div className={styles.avatar369}>
         {userData?.avatar && (
-          <img src={userData.avatar} />
+            <>
+           <Avatar style={{ justifyContent: "center", display: "flex" }} sx={{ height: '600px', width: '600px' }} alt="Remy Sharp" src={userData.avatar} />
+           <Button
+           startIcon={<PortraitIcon />}
+           className={styles.avatarButton}
+        sx={ { borderRadius: 28 } }
+        onChange={uploadPhoto}
+  variant="contained"
+  component="label"
+>
+Change
+  <input
+    type="file"
+    hidden
+    accept="image/png, image/jpeg"
+  />
+</Button>
+           </>
         )}
-        <p>Upload a .png or .jpg image (max 1MB).</p>
-        <input
-          onChange={uploadPhoto}
-          type="file"
-          accept="image/png, image/jpeg"
-        />
+</div>
+        
       </>
     )
   }

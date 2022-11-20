@@ -5,7 +5,10 @@ import useUserData from "../../hooks/useUser";
 import UserCredencialsForm from "../userCredencialsForm/userCredencialsForm";
 import { useRef } from "react";
 import Avatar from "../avatar";
-
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import { Button } from '@mui/material';
+import TwitterIcon from '@mui/icons-material/Twitter';
 function UserProfile() {
   const session = useSession();
   const { userData, update } = useUserData();
@@ -43,22 +46,50 @@ function UserProfile() {
   return (
     <>
       <Avatar/>
+      <div className={styles.credentials}>
+      
+        {!userData?.firstName ? console.log(session) : `${userData?.firstName} ${userData?.lastName}` }
+      </div>
+      <div className={styles.description}>
+        {`${userData?.description}`}
+      </div>
+
+      <div className = {styles.technologies}>
+        Technologies
+        <div>
+          {userData?.technologies.map((item)=> {
+            return (
+            
+              <Chip sx={{
+                marginLeft:1,
+              
+                width:150,
+                fontSize:20
+              }} color='primary' label={item} />
+
+            )
+          }) }
+        </div>
+      </div>
+
+      <div className = {styles.technologies}>
+        Social Media
+        <div>
+        {userData?.linkedIn && (
+          <Button 
+          href={userData?.linkedIn}
+          startIcon={<TwitterIcon/>}
+          className={styles.avatarButton}
+       sx={ { borderRadius: 28 } }
+
+ variant="contained"
+ component="label" >LinkedIn</Button>
+        )}
+        </div>
+      </div>
       <UserCredencialsForm />
       
-      <section>
-        <h1>Your User Profile</h1>
-        <pre>{JSON.stringify(session, null, 2)}</pre>
-        <pre>{JSON.stringify(userData, null, 2)}</pre>
-        <input
-          value={age}
-          onChange={(e) => setAge(e.currentTarget.value)}
-        ></input>
 
-
-        <button onClick={handleUpdate}>Save</button>
-        <button onClick={signOut}>Sign out</button>
-        {/* //<ProfileForm onChangePassword={changePasswordHandler} /> */}
-      </section>
     </>
   );
 }
