@@ -1,16 +1,8 @@
+import useUserData from "../../hooks/useUser";
+
 export default function Avatar() {
-    return (
-      <>
-        <p>Upload a .png or .jpg image (max 1MB).</p>
-        <input
-          onChange={uploadPhoto}
-          type="file"
-          accept="image/png, image/jpeg"
-        />
-      </>
-    )
-  }
-  
+  const { update, userData } = useUserData();
+
   const uploadPhoto = async (e) => {
     const file = e.target.files?.[0];
     const filename = encodeURIComponent(file.name)
@@ -30,12 +22,28 @@ export default function Avatar() {
       method: 'POST',
       body: formData,
     })
-
-    console.log(upload);
+    
+    update({
+      avatar: url + fields.key,
+    })
   
     if (upload.ok) {
       console.log('Uploaded successfully!')
     } else {
       console.error('Upload failed.')
     }
+  }
+    return (
+      <>
+        {userData?.avatar && (
+          <img src={userData.avatar} />
+        )}
+        <p>Upload a .png or .jpg image (max 1MB).</p>
+        <input
+          onChange={uploadPhoto}
+          type="file"
+          accept="image/png, image/jpeg"
+        />
+      </>
+    )
   }

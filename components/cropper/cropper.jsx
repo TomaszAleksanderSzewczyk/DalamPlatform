@@ -95,28 +95,6 @@ export default function RenderCropper({ handleCropper }) {
 		
 
 
-		try{
-			const formData = new FormData();
-			
-			formData.append('croppedImage', convertedUrlToFile);
-			const photoObject =  {
-				name: convertedUrlToFile.name,
-				type: convertedUrlToFile.type,
-				size: convertedUrlToFile.size
-			}
-			
-			const res = await fetch(`api/photos`, {
-				method:'POST',
-				body: JSON.stringify(photoObject),
-			})
-
-			const res2 = await res.json();
-			console.log(res2);
-		}catch(err){
-console.log(err);
-		}
-	};
-
 	return (
 		<div className={styles.container}>
 			<IconButton className={classes.iconButton} onClick={handleCropper}>
@@ -191,4 +169,5 @@ console.log(err);
 			</div>
 		</div>
 	);
+}
 }
