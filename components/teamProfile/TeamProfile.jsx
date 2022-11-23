@@ -1,6 +1,8 @@
-import styles from './user-profile.module.css'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router'
+
+import styles from './TeamProfile.module.css'
 import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
 import useUserData from "../../hooks/useUser";
 import UserCredencialsForm from "../userCredencialsForm/userCredencialsForm";
 import { useRef } from "react";
@@ -9,16 +11,23 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
 import TwitterIcon from '@mui/icons-material/Twitter';
-function UserProfile() {
+import useTeamData from '../../hooks/useTeams';
+function TeamProfile() {
+  const { getOne } = useTeamData();
+  const [teamData, setTeamData] = useState([])
+  const router = useRouter()
+  const { id } = router.query;
+  console.log(id);
+  useEffect(() => {
+    getOne(id).then((data) => setTeamData(data));
+  }, []);
+  
   const session = useSession();
   const { userData, update } = useUserData();
 
+
+  console.log(teamData);
   const inputRef = useRef();
-  const triggerFileSelectPopup = () => inputRef.current.click();
-  const [image, setImage] = useState(null);
-	const [croppedArea, setCroppedArea] = useState(null);
-	const [crop, setCrop] = useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = useState(1);
   // const [isLoading, setIsLoading] = useState(true);
 
   // useEffect(() => {
@@ -45,13 +54,14 @@ function UserProfile() {
 
   return (
     <>
-      <Avatar/>
       <div className={styles.credentials}>
       
-        {!userData?.firstName ? console.log(session) : `${userData?.firstName} ${userData?.lastName}` }
-      </div>
+      {!teamData?.name ? console.log(session) : `${teamData?.name}` }
+    </div>
+      <Avatar/>
+     
       <div className={styles.description}>
-        {`${userData?.description}`}
+        {`${teamData?.description}`}
       </div>
 
       <div className = {styles.technologies}>
@@ -94,4 +104,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default TeamProfile;

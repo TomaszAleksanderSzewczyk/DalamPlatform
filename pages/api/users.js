@@ -3,7 +3,12 @@ import nc from "next-connect";
 import { getSession } from "next-auth/react";
 //getting all users
 
-export const mapUsers = ({ _id, email }) => ({ _id, email });
+export const mapUsers = ({ _id, email, firstName, lastName }) => ({
+  _id,
+  email,
+  firstName,
+  lastName,
+});
 
 export default nc().get(async (req, res) => {
   const session = await getSession({ req });

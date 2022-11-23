@@ -10,7 +10,10 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import styles from "./Navbar.module.css";
+import useUserData from "../../hooks/useUser";
 export function Navbar() {
+  const { userData } = useUserData();
   const router = useRouter();
   const { update } = useSession();
   const handleLogOut = async () => {
@@ -37,8 +40,70 @@ export function Navbar() {
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
             DALAM
           </Typography>
+          <Link href='/profile/invitations'>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              color='inherit'
+            >
+              Invitations
+            </Button>
+          </Link>
+          <Link href={`/teams/${userData?.team}`}>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              color='inherit'
+            >
+              my Team
+            </Button>
+          </Link>
+          <Link href='/profile'>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              color='inherit'
+            >
+              Profile
+            </Button>
+          </Link>
+          <Link href='/users'>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              color='inherit'
+            >
+              Users
+            </Button>
+          </Link>
+          <Link href='/teams'>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              color='inherit'
+            >
+              Teams
+            </Button>
+          </Link>
+          <Link href='/tasks'>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              color='inherit'
+            >
+              Tasks
+            </Button>
+          </Link>
+          <Link href='/profile/settings'>
+            <Button
+              sx={{ backgroundColor: "white", color: "black", border: 3 }}
+              onClick={handleLogOut}
+              color='inherit'
+            >
+              Settings
+            </Button>
+          </Link>
+
           <Link href='/login'>
-            <Button onClick={handleLogOut} color='inherit'>
+            <Button
+              sx={{ border: 3, borderColor: "black" }}
+              onClick={handleLogOut}
+              color='inherit'
+            >
               Logout
             </Button>
           </Link>

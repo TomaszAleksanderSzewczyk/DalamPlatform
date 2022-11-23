@@ -32,6 +32,7 @@
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-easy-crop": "^4.6.2",
+    "react-jss": "^8.0.0",
     "styled-components": "^5.3.6"
   }
 }

@@ -9,9 +9,14 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
 import TwitterIcon from '@mui/icons-material/Twitter';
-function UserProfile() {
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+function UserListProfile() {
   const session = useSession();
-  const { userData, update } = useUserData();
+  const router = useRouter();
+  const { id } = router.query;
+  console.log("diddddd", id);
+  const { userData, update, getOneFromList  } = useUserData();
 
   const inputRef = useRef();
   const triggerFileSelectPopup = () => inputRef.current.click();
@@ -36,13 +41,16 @@ function UserProfile() {
   // }
 
   const [age, setAge] = useState("");
-  const handleUpdate = () => {
-    update({ age });
-  };
+  const [userFromListData, setUserData] = useState();
 
 
 
-
+  useEffect(async() => {
+    await getOneFromList(id).then((data) =>{
+        console.log("data",data);
+        setUserData(data)} );
+  }, []);
+  console.log(userFromListData);
   return (
     <>
       <Avatar/>
@@ -94,4 +102,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default UserListProfile;

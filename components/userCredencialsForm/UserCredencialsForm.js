@@ -34,7 +34,7 @@ export default function UserCredencialsForm({ properties }) {
   const [lastName, setLastName] = useState("");
   const [technologies, setTechnologies] = useState([]);
   const [linkedIn, setLinkedIn] = useState("s");
-  console.log(technologies);
+
   const router = useRouter();
   const handleUpdate = () => {
     update({ firstName, lastName, description, technologies, linkedIn });
@@ -65,6 +65,7 @@ export default function UserCredencialsForm({ properties }) {
             name='first-name'
             autoFocus
             onChange={(e) => setFirstName(e.target.value)}
+            defaultValue={userData?.firstName}
           />
 
           <TextField

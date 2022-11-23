@@ -5,7 +5,9 @@ const useUserData = () => {
   const session = useSession();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const getOneFromList = useCallback((id) => {
+    return fetch("/api/listUser/" + id).then((res) => res.json());
+  }, []);
   const refresh = useCallback(() => {
     if (isLoading) {
       return;
@@ -47,6 +49,7 @@ const useUserData = () => {
     update,
     userData,
     isLoading,
+    getOneFromList,
   };
 };
 
