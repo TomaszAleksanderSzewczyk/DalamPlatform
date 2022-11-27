@@ -21,9 +21,12 @@
     "@mui/material": "^5.10.12",
     "@mui/styled-engine-sc": "^5.10.6",
     "@mui/x-date-pickers": "^5.0.7",
+    "axios": "^1.2.0",
     "bcryptjs": "^2.4.3",
     "cdk": "^2.51.1",
     "dayjs": "^1.11.6",
+    "eslint": "8.28.0",
+    "eslint-config-next": "13.0.5",
     "mongodb": "^4.11.0",
     "nc": "^1.0.3",
     "next": "^12.0.0",
@@ -33,6 +36,7 @@
     "react-dom": "^17.0.0",
     "react-easy-crop": "^4.6.2",
     "react-jss": "^8.0.0",
+    "react-query": "^3.39.2",
     "styled-components": "^5.3.6"
   }
 }

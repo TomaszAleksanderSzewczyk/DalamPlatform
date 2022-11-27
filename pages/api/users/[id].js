@@ -1,6 +1,7 @@
 import { connectToDatabase } from "../../../lib/db";
 import nc from "next-connect";
 import { getSession } from "next-auth/react";
+import { mapUser } from "../../../utils/api/mapUser";
 
 export default nc().get(async (req, res) => {
   const session = await getSession({ req: req });
@@ -14,16 +15,16 @@ export default nc().get(async (req, res) => {
 
   const client = await connectToDatabase();
 
-  const teamsCollection = client.db().collection("teams");
+  const usersCollection = client.db().collection("users");
 
-  const team = await teamsCollection.findOne({ _id: new ObjectId(id) });
+  const user = await usersCollection.findOne({ _id: new ObjectId(id) });
 
-  if (!team) {
-    res.status(404).json({ message: "Team not found." });
+  if (!user) {
+    res.status(404).json({ message: "User not found." });
     client.close();
     return;
   }
 
   client.close();
-  res.status(200).json(team);
+  res.status(200).json(mapUser(user));
 });

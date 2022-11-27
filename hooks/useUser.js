@@ -1,26 +1,17 @@
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 const useUserData = () => {
   const session = useSession();
-  const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  console.log(session);
+  const { data: userData, isLoading, refetch } = useQuery(
+    ["user", session?.user?.id],
+    () => fetch("/api/user")
+      .then((res) => res.json())
+  );
   const getOneFromList = useCallback((id) => {
     return fetch("/api/listUser/" + id).then((res) => res.json());
-  }, []);
-  const refresh = useCallback(() => {
-    if (isLoading) {
-      return;
-    }
-    setIsLoading(true);
-    fetch("/api/user")
-      .then((res) => res.json())
-      .then((data) => {
-        setUserData(data);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
   }, []);
 
   const update = useCallback(
@@ -30,22 +21,13 @@ const useUserData = () => {
         body: JSON.stringify(data),
       })
         .then((res) => res.json())
-        .finally(() => refresh());
+        .finally(() => refetch());
     },
-    [refresh]
+    [refetch]
   );
 
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-    if (session) {
-      refresh();
-    }
-  }, [session, refresh]);
-
   return {
-    refresh,
+    refetch,
     update,
     userData,
     isLoading,

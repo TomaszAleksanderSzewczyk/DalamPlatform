@@ -10,15 +10,17 @@ const useTeamData = () => {
     return fetch("/api/teams").then((res) => res.json());
   }, []);
 
+  const deleteOne = useCallback((id) => {
+    return fetch("/api/teams/" + id, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  }, []);
+
   const update = useCallback((id, data) => {
     return fetch(`/api/teams/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    }).then((res) => res.json(data));
+    }).then((res) => res.json());
   }, []);
 
   const create = useCallback((data) => {
@@ -36,6 +38,7 @@ const useTeamData = () => {
     getAll,
     create,
     update,
+    deleteOne,
   };
 };
 

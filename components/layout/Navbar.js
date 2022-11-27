@@ -48,12 +48,12 @@ export function Navbar() {
               Invitations
             </Button>
           </Link>
-          <Link href={`/teams/${userData?.team}`}>
+          <Link href={`/teams/${userData?.team || 'new'}`}>
             <Button
               sx={{ backgroundColor: "white", color: "black", border: 3 }}
               color='inherit'
             >
-              my Team
+              {userData?.team ? 'my Team' : 'create team'}
             </Button>
           </Link>
           <Link href='/profile'>

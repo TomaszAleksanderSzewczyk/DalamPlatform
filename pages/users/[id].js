@@ -5,7 +5,6 @@ import { Navbar } from "../../components/layout/Navbar";
 function UserPage() {
   return (
     <>
-      <Navbar />
       <UserListProfile />
     </>
   );

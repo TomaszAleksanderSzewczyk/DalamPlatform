@@ -1,14 +1,8 @@
-import { connectToDatabase } from "../../lib/db";
+import { connectToDatabase } from "../../../lib/db";
 import nc from "next-connect";
 import { getSession } from "next-auth/react";
+import { mapUser } from "../../../utils/api/mapUser";
 //getting all users
-
-export const mapUsers = ({ _id, email, firstName, lastName }) => ({
-  _id,
-  email,
-  firstName,
-  lastName,
-});
 
 export default nc().get(async (req, res) => {
   const session = await getSession({ req });
@@ -22,7 +16,7 @@ export default nc().get(async (req, res) => {
 
   const usersCollection = Array.from(
     await client.db().collection("users").find().toArray()
-  ).map(mapUsers);
+  ).map(mapUser);
 
   if (!usersCollection) {
     res.status(404).json({ message: "Users not found." });

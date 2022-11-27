@@ -9,38 +9,17 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import { useMutation, useQuery } from 'react-query';
+import InvitationsApi from '../../api/invitations';
+import { useEffect } from 'react';
+import TeamsApi from '../../api/teams';
+
 function UserProfile() {
   const session = useSession();
   const { userData, update } = useUserData();
+  const { data: invitations, refetch } = useQuery('invitations', InvitationsApi.getAll);
 
   const inputRef = useRef();
-  const triggerFileSelectPopup = () => inputRef.current.click();
-  const [image, setImage] = useState(null);
-	const [croppedArea, setCroppedArea] = useState(null);
-	const [crop, setCrop] = useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = useState(1);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   getSession().then((session) => {
-  //     if (!session) {
-  //       window.location.href = '/auth';
-  //     } else {
-  //       setIsLoading(false);
-  //     }
-  //   });
-  // }, []);
-
-  // if (isLoading) {
-  //   return <p className={classes.profile}>Loading...</p>;
-  // }
-
-  const [age, setAge] = useState("");
-  const handleUpdate = () => {
-    update({ age });
-  };
-
-
 
 
   return (
@@ -57,7 +36,7 @@ function UserProfile() {
       <div className = {styles.technologies}>
         Technologies
         <div>
-          {userData?.technologies.map((item)=> {
+          {userData?.technologies?.map((item)=> {
             return (
             
               <Chip sx={{

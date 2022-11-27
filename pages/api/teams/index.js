@@ -23,7 +23,6 @@ export default nc()
     res.status(200).json(teams);
   })
   .post(async (req, res) => {
-    console.log("TEST");
     const session = await getSession({ req: req });
 
     if (!session) {
@@ -33,7 +32,10 @@ export default nc()
 
     const email = session.user.email;
     const name = req.body.name;
+    console.log(name);
+
     const description = req.body.description;
+    console.log(description);
     console.log("name:", name);
     console.log("description", description);
     const client = await connectToDatabase();
@@ -54,7 +56,7 @@ export default nc()
 
     const team = await teamsCollection.findOne({ name });
 
-    if (user.team) {
+    if (team?.name) {
       res.status(400).json({ message: "Team with this name already exists!" });
       client.close();
       return;
@@ -65,6 +67,7 @@ export default nc()
       name: name,
       owner: user._id,
       description: description,
+      users: [user._id],
     });
     console.log("test4");
 

@@ -1,14 +1,9 @@
 import { getSession } from "next-auth/react";
 
-import UserProfile from "../components/profile/user-profile";
-import { Navbar } from "../components/layout/Navbar";
+import UserProfile from "../../components/profile/user-profile";
+
 function ProfilePage() {
-  return (
-    <>
-      <Navbar />
-      <UserProfile />
-    </>
-  );
+  return <UserProfile />;
 }
 
 export async function getServerSideProps(context) {

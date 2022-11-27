@@ -1,65 +1,47 @@
-import { getSession, signIn } from "next-auth/react";
-import { programmingLanguages } from "../../utils/programmingLanguages";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Alert from "@mui/material/Alert";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import Autocomplete from "@mui/material/Autocomplete";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import useUsers from "../../hooks/useUsers";
 import useUser from "../../hooks/useUser";
 import useTeams from "../../hooks/useTeams";
+import { useRouter } from "next/router";
 
-export default function CreateTeamForm({ properties }) {
-  const [users, setUsers] = useState([]);
-  const { getAll } = useUsers();
-  const { create } = useTeams();
-  const { refresh } = useUser();
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
-  const checkedIcon = <CheckBoxIcon fontSize='small' />;
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [teamName, setTeamName] = useState("");
-  console.log(teamName);
-
+export default function TeamForm({ properties = {}, isEdit = false }) {
+  const { create, update } = useTeams();
+  const { refetch } = useUser();
+  const [teamName, setTeamName] = useState(properties.teamName);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [description, setDescription] = useState("");
-  console.log(description);
-  const router = useRouter();
-
-  useEffect(() => {
-    getAll().then((data) => setUsers(data));
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [description, setDescription] = useState(properties.description);
+  const { push } = useRouter();
 
   const handleAdd = (e) => {
+    setError("");
+    setIsLoading(true);
     e.preventDefault();
-    create({
-      name: teamName,
-      description: description,
-    })
-      .then(() => refresh())
-      .catch((e) => setError(e.message));
-  };
+    const newData = { name: teamName, description };
 
-  const emails = users.map(({ email }) => email);
+    const promise = isEdit
+      ? update(properties._id, newData)
+      : create(newData);
+
+    promise
+      .then((data) => {
+        refetch();
+        push('/teams/' + data.insertedId)
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setIsLoading(false));
+  };
 
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
+      <strong>{error}</strong>
       <Box
         sx={{
           marginTop: 8,
@@ -69,7 +51,7 @@ export default function CreateTeamForm({ properties }) {
         }}
       >
         <Typography component='h1' variant='h5'>
-          Create Team
+          {isEdit ? 'Edit Team' : 'Create Team'}
         </Typography>
         {error && <Alert severity='error'>{error}</Alert>}
         <form onSubmit={handleAdd}>
@@ -101,8 +83,9 @@ export default function CreateTeamForm({ properties }) {
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
             >
-              Create Team
+              {isEdit ? 'Edit Team' : 'Create Team'}
             </Button>
           </Box>
         </form>
@@ -111,10 +94,3 @@ export default function CreateTeamForm({ properties }) {
   );
 }
 
-export async function getServerSideProps() {
-  const res = await fetch(`api/users`);
-  const data = await res.json();
-  console.log(data);
-  // Pass data to the page via props
-  return { props: { data } };
-}
