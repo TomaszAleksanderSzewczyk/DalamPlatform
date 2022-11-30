@@ -116,11 +116,16 @@ function TeamProfile() {
           </div>
         )}
       </div>
-      <Avatar />
+      <div className={styles.teamName}>
+        <small>{teamData?.owner === userData?.id ? 'Your team' : ''}</small>
+        {`${teamData?.name}`}
+      </div>
       <div className={styles.description}>
         <small>{teamData?.owner === userData?.id ? 'Your team' : ''}</small>
         {`${teamData?.description}`}
       </div>
+
+
 
       <div className={styles.technologies}>
         Technologies
@@ -144,6 +149,21 @@ function TeamProfile() {
 
       <div className={styles.technologies}>
         Social Media
+        <div>
+          {userData?.linkedIn && (
+            <Button
+
+              startIcon={<TwitterIcon />}
+              className={styles.avatarButton}
+              sx={{ borderRadius: 28 }}
+
+              variant="contained"
+              component="label" >LinkedIn</Button>
+          )}
+        </div>
+      </div>
+      <div className={styles.technologies}>
+        USERS
         <div>
           {userData?.linkedIn && (
             <Button

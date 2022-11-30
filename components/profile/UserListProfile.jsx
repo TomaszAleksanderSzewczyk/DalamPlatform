@@ -50,22 +50,21 @@ function UserListProfile() {
         console.log("data",data);
         setUserData(data)} );
   }, []);
-  console.log(userFromListData);
+  console.log("chuj",userFromListData);
   return (
     <>
-      <Avatar/>
       <div className={styles.credentials}>
       
-        {!userData?.firstName ? console.log(session) : `${userData?.firstName} ${userData?.lastName}` }
+        {!userFromListData?.firstName ? console.log(session) : `${userFromListData?.firstName} ${userFromListData?.lastName}` }
       </div>
       <div className={styles.description}>
-        {`${userData?.description}`}
+        {`${userFromListData?.description}`}
       </div>
 
       <div className = {styles.technologies}>
         Technologies
         <div>
-          {userData?.technologies.map((item)=> {
+          {userFromListData?.technologies.map((item)=> {
             return (
             
               <Chip sx={{
@@ -83,7 +82,7 @@ function UserListProfile() {
       <div className = {styles.technologies}>
         Social Media
         <div>
-        {userData?.linkedIn && (
+        {userFromListData?.linkedIn && (
           <Button 
           
           startIcon={<TwitterIcon/>}

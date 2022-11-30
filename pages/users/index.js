@@ -8,6 +8,7 @@ import {
   Typography,
   CardActions,
   Button,
+  Chip,
 } from "@mui/material";
 import Link from "next/link";
 import useUsers from "../../hooks/useUsers";
@@ -25,8 +26,8 @@ export default function Teams() {
     <Grid container spacing={1}>
       {users?.map((user) => {
         return (
-          <Grid item md={3} key={user._id}>
-            <Card sx={{ maxWidth: 345, background: "#F3F2EF" }}>
+          <Grid item md={6} lg={4} sm={12} key={user._id}>
+            <Card sx={{ minWidth: 500, maxWidth: 700, background: "#F3F2EF" }}>
               <CardMedia
                 component='img'
                 height='160'
@@ -45,6 +46,21 @@ export default function Teams() {
                 </Typography>
                 <Typography variant='body2' color='text.secondary'>
                   {user.description}
+                  {user?.technologies?.map((item) => {
+                    return (
+                      <Chip
+                        key={item}
+                        sx={{
+                          marginLeft: 1,
+                          marginBottom: 1,
+                          width: 100,
+                          fontSize: 16,
+                        }}
+                        color='primary'
+                        label={item}
+                      />
+                    );
+                  })}
                 </Typography>
               </CardContent>
               <CardActions>
