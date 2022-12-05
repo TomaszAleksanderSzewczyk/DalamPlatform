@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import useUserData from "../hooks/useUser";
 
 async function createUser(email, password) {
   const response = await fetch("/api/auth/signup", {
@@ -38,7 +39,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const { userData } = useUserData();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -67,8 +68,11 @@ export default function Login() {
     });
 
     if (!result.error) {
+      console.log(userData);
       // set some auth state
-      router.replace("/profile");
+      if (!userData?.firstName) {
+        router.replace("/credentials");
+      } else router.replace("/profile");
     }
 
     if (result.error) {

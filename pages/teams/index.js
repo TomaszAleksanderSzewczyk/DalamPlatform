@@ -3,12 +3,13 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Divider,
   Typography,
   Button,
   Grid,
   CardActions,
 } from "@mui/material";
+
+import styles from "../../styles/teams.module.css";
 
 import useTeamData from "../../hooks/useTeams";
 
@@ -24,36 +25,41 @@ export default function Teams() {
   console.log(teamsData);
 
   return (
-    <Grid container spacing={1}>
-      <Grid item md={3}></Grid>
-
-      {teamsData?.map((team) => {
-        return (
-          <Grid item md={3} key={team._id}>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardMedia
-                component='img'
-                height='160'
-                image='https://images.panda.org/assets/images/pages/welcome/orangutan_1600x1000_279157.jpg'
-                alt='green iguana'
-              />
-              <CardContent>
-                <Typography gutterBottom variant='h5' component='div'>
-                  {team.name}
-                </Typography>
-                <Typography variant='body2' color='text.secondary'>
-                  {team.description}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Link href={`/teams/${team._id}`}>
-                  <Button size='small'>Profile</Button>
-                </Link>
-              </CardActions>
-            </Card>
-          </Grid>
-        );
-      })}
-    </Grid>
+    <div className={styles.center}>
+      <Grid container spacing={1}>
+        {teamsData?.map((team) => {
+          return (
+            <Grid item md={6} lg={6} sm={12} key={team._id}>
+              <Card
+                sx={{
+                  maxHeight: 400,
+                  background: "#F3F2EF",
+                }}
+              >
+                <CardMedia
+                  component='img'
+                  height='160'
+                  image='https://images.panda.org/assets/images/pages/welcome/orangutan_1600x1000_279157.jpg'
+                  alt='green iguana'
+                />
+                <CardContent>
+                  <Typography gutterBottom variant='h5' component='div'>
+                    {team.name}
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    {team.description}
+                  </Typography>
+                </CardContent>
+                <CardActions sx>
+                  <Link href={`/teams/${team._id}`}>
+                    <Button size='small'>Profile</Button>
+                  </Link>
+                </CardActions>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+    </div>
   );
 }

@@ -13,26 +13,34 @@ import { useMutation, useQuery } from 'react-query';
 import InvitationsApi from '../../api/invitations';
 import { useEffect } from 'react';
 import TeamsApi from '../../api/teams';
-
+import {Grid} from '@mui/material';
+import {Link} from '@mui/material';
 function UserProfile() {
   const session = useSession();
   const { userData, update } = useUserData();
   const { data: invitations, refetch } = useQuery('invitations', InvitationsApi.getAll);
-
+console.log(userData?.linkedIn)
   const inputRef = useRef();
 
 
   return (
-    <>
+<div className ={styles.center}>
+    <Grid container sx= {{backgroundColor:"#F3F2EF"}} >
+      <Grid item md={12} lg={12} sm={12} >
       <Avatar/>
+      </Grid>
+      <Grid item md={12} lg={12} sm={12} >
       <div className={styles.credentials}>
       
         {!userData?.firstName ? console.log(session) : `${userData?.firstName} ${userData?.lastName}` }
       </div>
+      </Grid>
+      <Grid item md={12} lg={12} sm={12} >
       <div className={styles.description}>
         {`${userData?.description}`}
       </div>
-
+      </Grid>
+      <Grid item md={12} lg={12} sm={12} >
       <div className = {styles.technologies}>
         Technologies
         <div>
@@ -50,11 +58,14 @@ function UserProfile() {
           }) }
         </div>
       </div>
-
+      </Grid>
+      <Grid item md={12} lg={12} sm={12} >
       <div className = {styles.technologies}>
         Social Media
         <div>
         {userData?.linkedIn && (
+         <Link target="_blank" href={`https://${userData?.linkedIn}`}
+         rel="noreferrer">
           <Button 
           
           startIcon={<TwitterIcon/>}
@@ -63,13 +74,15 @@ function UserProfile() {
 
  variant="contained"
  component="label" >LinkedIn</Button>
+</Link>
         )}
         </div>
       </div>
-      <UserCredencialsForm />
+      </Grid>
       
 
-    </>
+      </Grid>
+      </div>
   );
 }
 

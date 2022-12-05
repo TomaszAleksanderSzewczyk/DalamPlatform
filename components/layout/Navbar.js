@@ -48,12 +48,12 @@ export function Navbar() {
               Invitations
             </Button>
           </Link>
-          <Link href={`/teams/${userData?.team || 'new'}`}>
+          <Link href={`/teams/${userData?.team || "new"}`}>
             <Button
               sx={{ backgroundColor: "white", color: "black", border: 3 }}
               color='inherit'
             >
-              {userData?.team ? 'my Team' : 'create team'}
+              {userData?.team ? "my Team" : "create team"}
             </Button>
           </Link>
           <Link href='/profile'>
@@ -88,10 +88,9 @@ export function Navbar() {
               Tasks
             </Button>
           </Link>
-          <Link href='/profile/settings'>
+          <Link href='/settings'>
             <Button
               sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              onClick={handleLogOut}
               color='inherit'
             >
               Settings
