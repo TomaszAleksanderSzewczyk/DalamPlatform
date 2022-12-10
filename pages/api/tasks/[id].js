@@ -24,20 +24,20 @@ export default nc()
     res.status(200).json(task);
   })
   .patch(async (req, res) => {
+    console.log("WBILEM DO PATCHA");
     const session = await getSession({ req: req });
 
     if (!session) {
       res.status(401).json({ message: "Not authenticated!" });
       return;
     }
-
+    console.log(req);
     const id = req.query.id;
-
+    console.log("id", id);
     const client = await connectToDatabase();
     const usersCollection = client.db().collection("users");
     const tasksCollection = client.db().collection("tasks");
     const task = await tasksCollection.findOne({ _id: ObjectId(id) });
-
     if (!task) {
       res.status(404).json({ message: "Task not found!" });
       client.close();
@@ -51,13 +51,14 @@ export default nc()
       client.close();
       return;
     }
-    
-
+    console.log("reqbody", req.body.team);
     const name = req.body.name;
+    console.log("NAMEEEEEEE", name);
     const description = req.body.description;
     const selectedTeam = req.body.team;
+    console.log(selectedTeam, "selected Team");
     const isCompleted = req.body.isCompleted;
-
+    const salary = req.body.salary;
     const update = {};
     if (name) {
       update.name = name;
@@ -71,8 +72,11 @@ export default nc()
     if (isCompleted) {
       update.isCompleted = isCompleted;
     }
+    if (salary) {
+      update.salary = salary;
+    }
 
-    console.log(id, update, req.body)
+    console.log(id, update, req.body);
 
     const result = await tasksCollection.updateOne(
       { _id: ObjectId(id) },

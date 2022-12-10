@@ -18,9 +18,11 @@ function TeamPage(props) {
   const { getOne, update } = useTaskData();
   const { getAll } = useOffersData();
   const { data: task } = useQuery(["task", query.id], () => getOne(query.id));
-  const { data: offers } = useQuery(["offers", query.id], () => getAll({
-    task: query.id,
-  }));
+  const { data: offers } = useQuery(["offers", query.id], () =>
+    getAll({
+      task: query.id,
+    })
+  );
   const { mutate: accept } = useMutation(update);
 
   const handleAccept = (offer) => {
@@ -28,51 +30,37 @@ function TeamPage(props) {
       isAccepted: true,
       team: offer.team,
     });
-  }
-
+  };
 
   return (
     <Container component='main' maxWidth='xs'>
-      {task?.owner === userData?._id && task && (
-        <div>
-          <div>Edit</div>
-          <TaskForm {...task} />
-        </div>
-      )}
+      <div className='taskName'>{task?.name}</div>
+      <hr />
+      <div className='taskName'>{task?.description}</div>
+      <hr />
+      <div className='taskName'>{task?.salary}</div>
       <CssBaseline />
-      <pre>
-      {JSON.stringify(task, null, 2)}
-      </pre>
       <div>
         <h2>Offers</h2>
         {offers?.map((offer) => (
           <div key={offer._id}>
-            <div>
-              Price: {offer.price}
-            </div>
-            <div>
-              Description: {offer.description}
-            </div>
-            {offer.isAccepted && (
-              <div>
-                Accepted
-              </div>
-            )}
+            <div>Price: {offer.price}</div>
+            <div>Description: {offer.description}</div>
+            {offer.isAccepted && <div>Accepted</div>}
             {!task?.team && task?.owner === userData?._id && (
-              <button onClick={() => handleAccept(offer._id)}>
-                Accept
-              </button>
+              <button onClick={() => handleAccept(offer._id)}>Accept</button>
             )}
-            {offer.owner === userData?._id && offer && (
-              <OfferForm {...offer} />
-            )}
+            {offer.owner === userData?._id && offer && <OfferForm {...offer} />}
             <hr />
           </div>
         ))}
       </div>
-      {task?.owner !== userData?._id && (
-        <OfferForm />
+      {task?.owner === userData?._id && task && (
+        <div>
+          <TaskForm {...task} />
+        </div>
       )}
+      {task?.owner !== userData?._id && <OfferForm />}
     </Container>
   );
 }

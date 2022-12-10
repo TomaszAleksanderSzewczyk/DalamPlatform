@@ -18,21 +18,18 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
   const [isLoading, setIsLoading] = useState(false);
   const [description, setDescription] = useState(properties.description);
   const { push } = useRouter();
-
   const handleAdd = (e) => {
     setError("");
     setIsLoading(true);
     e.preventDefault();
     const newData = { name: teamName, description };
 
-    const promise = isEdit
-      ? update(properties._id, newData)
-      : create(newData);
+    const promise = isEdit ? update(properties._id, newData) : create(newData);
 
     promise
       .then((data) => {
         refetch();
-        push('/teams/' + data.insertedId)
+        push("/teams/" + data.insertedId);
       })
       .catch((e) => setError(e.message))
       .finally(() => setIsLoading(false));
@@ -51,7 +48,7 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
         }}
       >
         <Typography component='h1' variant='h5'>
-          {isEdit ? 'Edit Team' : 'Create Team'}
+          {isEdit ? "Edit Team" : "Create Team"}
         </Typography>
         {error && <Alert severity='error'>{error}</Alert>}
         <form onSubmit={handleAdd}>
@@ -85,7 +82,7 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
               sx={{ mt: 3, mb: 2 }}
               disabled={isLoading}
             >
-              {isEdit ? 'Edit Team' : 'Create Team'}
+              {isEdit ? "Edit Team" : "Create Team"}
             </Button>
           </Box>
         </form>
@@ -93,4 +90,3 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
     </Container>
   );
 }
-

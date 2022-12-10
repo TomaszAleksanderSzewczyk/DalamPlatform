@@ -3,11 +3,14 @@ import { useCallback, useEffect, useState } from "react";
 
 const useOffersData = () => {
   const getOne = useCallback((id) => {
-    return fetch("/api/offers/" + id ).then((res) => res.json());
+    return fetch("/api/offers/" + id).then((res) => res.json());
   }, []);
 
   const getAll = useCallback((query) => {
-    return fetch("/api/offers?" + new URLSearchParams(query).toString()).then((res) => res.json());
+    console.log("pobierz wszystkie ofersy");
+    return fetch("/api/offers?" + new URLSearchParams(query).toString()).then(
+      (res) => res.json()
+    );
   }, []);
 
   const deleteOne = useCallback((id) => {

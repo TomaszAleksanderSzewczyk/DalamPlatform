@@ -7,7 +7,9 @@ const useTaskData = () => {
   }, []);
 
   const getAll = useCallback((query = {}) => {
-    return fetch("/api/tasks?" + new URLSearchParams(query).toString()).then((res) => res.json());
+    return fetch("/api/tasks?" + new URLSearchParams(query).toString()).then(
+      (res) => res.json()
+    );
   }, []);
 
   const deleteOne = useCallback((id) => {
@@ -17,6 +19,8 @@ const useTaskData = () => {
   }, []);
 
   const update = useCallback((id, data) => {
+    console.log("data", data);
+    console.log("podbilem pod oferte", id);
     return fetch(`/api/tasks/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),

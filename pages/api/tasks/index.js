@@ -46,8 +46,10 @@ export default nc()
     console.log(name);
 
     const description = req.body.description;
+    const salary = req.body.salary;
     console.log(description);
     console.log("name:", name);
+    console.log("salary", salary);
     console.log("description", description);
     // console.log(client);
 
@@ -62,10 +64,11 @@ export default nc()
       name: name,
       owner: user._id,
       description: description,
+      salary: salary,
       team: null,
-      isCompleted: false
+      isCompleted: false,
     });
-    
+
     client.close();
     res.status(200).json(result);
   });

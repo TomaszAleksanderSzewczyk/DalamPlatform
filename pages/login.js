@@ -16,6 +16,7 @@ import Alert from "@mui/material/Alert";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useUserData from "../hooks/useUser";
+import { TroubleshootTwoTone } from "@mui/icons-material";
 
 async function createUser(email, password) {
   const response = await fetch("/api/auth/signup", {

@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 
 export default nc()
   .get(async (req, res) => {
+    console.log("GET ALL OFFERS");
     const id = req.query.id;
     const owner = req.query.owner;
     const offeredBy = req.query.offeredBy;
@@ -13,7 +14,7 @@ export default nc()
 
     const client = await connectToDatabase();
 
-    const tasksCollection = client.db().collection("teams");
+    const offersCollection = client.db().collection("offers");
 
     const query = {};
     if (id) {
@@ -31,13 +32,14 @@ export default nc()
     if (task) {
       query.task = task;
     }
-
-    const teams = await tasksCollection.find(query).toArray();
+    console.log("QUERY", query);
+    const offers = await offersCollection.find(query).toArray();
 
     client.close();
-    res.status(200).json(teams);
+    res.status(200).json(offers);
   })
   .post(async (req, res) => {
+    console.log("Create offer");
     const session = await getSession({ req: req });
 
     if (!session) {
@@ -50,32 +52,42 @@ export default nc()
     const description = req.body.description;
     const price = req.body.price;
     const task = req.body.task;
+    console.log("TASKKKK", task);
 
     const client = await connectToDatabase();
 
     const usersCollection = client.db().collection("users");
     const tasksCollection = client.db().collection("tasks");
     const teamsCollection = client.db().collection("teams");
+    const offersCollection = client.db().collection("offers");
 
     const user = await usersCollection.findOne({ email });
     const teamId = user.team;
     const team = await teamsCollection.findOne({ _id: ObjectId(teamId) });
 
-    if (team.owner !== user._id.toString()) {
-      res.status(401).json({ message: "You can't offer when you are not owner of the team!" });
+    if (team.owner.toString() !== user._id.toString()) {
+      res.status(401).json({
+        message: "You can't offer when you are not owner of the team!",
+      });
       client.close();
       return;
     }
 
     console.log("test3");
     console.log("req body", req.body);
-    const result = await tasksCollection.insertOne({
+    const result = await offersCollection.insertOne({
       team: user._id,
       description,
       price,
       task,
     });
-    
+    const result1 = await tasksCollection.insertOne({
+      team: user._id,
+      description,
+      price,
+      task,
+    });
     client.close();
     res.status(200).json(result);
+    res.status(200).json(result1);
   });

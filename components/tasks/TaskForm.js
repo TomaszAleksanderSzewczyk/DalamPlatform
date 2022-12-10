@@ -1,33 +1,45 @@
-
-import { Alert, Box, Button, Container, CssBaseline, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  TextField,
+  Typography,
+  Autocomplete,
+} from "@mui/material";
 import { useState } from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import useTaskData from "../../hooks/useTasks";
-
+import { programmingLanguages } from "../../utils/programmingLanguages";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const TaskForm = (properties = {}) => {
   const isEdit = !!properties._id;
   const { create, update } = useTaskData();
-  const [name, setName] = useState(properties.name || '');
-  const [description, setDescription] = useState(properties.description || '');
+  const [startDate, setStartDateValue] = useState(null);
+  const [finishDate, setFinishDateValue] = useState(null);
+  const [salary, setSalary] = useState(null);
+  const [name, setName] = useState(properties.name || "");
+  const [description, setDescription] = useState(properties.description || "");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(salary, "salary");
   const handleSave = (e) => {
     setError("");
     setIsLoading(true);
     e.preventDefault();
-    const newData = { name, description };
+    const newData = { name, description, salary };
 
-    const promise = isEdit
-      ? update(properties._id, newData)
-      : create(newData);
+    const promise = isEdit ? update(properties._id, newData) : create(newData);
 
     promise
-        .then((data) => {
+      .then((data) => {
         alert(JSON.stringify(data, null, 2));
-        })
+      })
       .catch((e) => setError(e.message))
       .finally(() => setIsLoading(false));
-  }
+  };
 
   return (
     <Container component='main' maxWidth='xs'>
@@ -42,7 +54,7 @@ const TaskForm = (properties = {}) => {
         }}
       >
         <Typography component='h1' variant='h5'>
-          {isEdit ? 'Edit Task' : 'Create Task'}
+          {isEdit ? "Edit Task" : "Create Task"}
         </Typography>
         {error && <Alert severity='error'>{error}</Alert>}
         <form onSubmit={handleSave}>
@@ -70,7 +82,19 @@ const TaskForm = (properties = {}) => {
               id='description'
               onChange={(e) => setDescription(e.target.value)}
             />
-
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              name=''
+              label='Salary'
+              type='number'
+              id='description'
+              onChange={(e) => setSalary(e.target.value)}
+              InputProps={{
+                inputProps: { min: 0 },
+              }}
+            />
             <Button
               type='submit'
               fullWidth
@@ -78,14 +102,13 @@ const TaskForm = (properties = {}) => {
               sx={{ mt: 3, mb: 2 }}
               disabled={isLoading}
             >
-              {isEdit ? 'Edit Task' : 'Create Task'}
+              {isEdit ? "Edit Task" : "Create Task"}
             </Button>
           </Box>
         </form>
       </Box>
     </Container>
-  )
-}
-
+  );
+};
 
 export default TaskForm;
