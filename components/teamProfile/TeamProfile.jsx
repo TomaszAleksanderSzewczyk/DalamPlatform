@@ -17,6 +17,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import AddUserToTeamDialog from "../Dialog/AddUserToTeamDialog";
 import DisplayInvitations from "../Dialog/DisplayInvitationsDialog";
+import AvatarComponent from "../avatar";
 const TeamMember = ({ user, refresh }) => {
   const { data, isLoading } = useQuery(["user", user], () =>
     UsersApi.getOne(user)
@@ -25,7 +26,7 @@ const TeamMember = ({ user, refresh }) => {
 
   return (
     <div>
-      {isLoading ? "Loading..." : data?.email} &nbsp;
+      {isLoading ? "Loading..." : data?.data?.email} &nbsp;
       {data && (
         <button onClick={() => mutate(user)} disabled={isOngoing}>
           Remove
@@ -38,18 +39,16 @@ const TeamMember = ({ user, refresh }) => {
 // todo fetch pending invitations for team
 
 function TeamProfile() {
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
-  const checkedIcon = <CheckBoxIcon fontSize='small' />;
-  const [users, setUsers] = useState([]);
-  const { getAll } = useUsers();
-  const [editTeam, setEditTeam] = useState(false);
   const [newTeammate, setNewTeammate] = useState("");
   const { refetch } = useUserData();
-  const { deleteOne, getOne } = useTeamData();
-  const mutation = useMutation(InvitationsApi.create);
+  const { deleteOne, getOne, update } = useTeamData();
   const router = useRouter();
   const { id } = router.query;
   const { data: teamData, isLoading, refetch: refetchTeam } = useTeamQuery(id);
+  const { mutate: updateTeam } = useMutation(data => update(id, data), {
+    onSettled: refetchTeam
+  });
+
   const { data: teamInvitations, refetch: refetchInvites } = useQuery(
     "invitations",
     () => InvitationsApi.getAllForTeam(id),
@@ -65,28 +64,6 @@ function TeamProfile() {
       router.push("/teams/new");
     });
   };
-
-  const addTeammate = () => {
-    mutation.mutate({ email: newTeammate, teamId: id });
-  };
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      alert("Invitation sent");
-      refetchTeam();
-      setNewTeammate("");
-      refetchInvites();
-    }
-    getAll().then((data) => setUsers(data));
-  }, [mutation.isSuccess, refetchTeam, refetchInvites]);
-
-  useEffect(() => {
-    if (mutation.isError) {
-      alert(mutation.error?.message);
-      refetchTeam();
-      setNewTeammate("");
-    }
-  }, [mutation.error?.message, mutation.isError, refetchTeam]);
 
   if (isLoading && !teamData) {
     return "Loading...";
@@ -119,6 +96,7 @@ function TeamProfile() {
           </div>
         )}
       </Grid>
+      <AvatarComponent src={teamData?.avatar} isEditable={isOwner} onUpdate={src => updateTeam({ avatar: src })} />
       <div className={styles.credentials}>
         {id !== "new" && isOwner && (
           <div>
@@ -191,7 +169,7 @@ function TeamProfile() {
         </div>
       </div>
 
-      {editTeam && <TeamForm properties={teamData} />}
+      {userData?._id === teamData?.owner && teamData && <TeamForm properties={teamData} isEdit />}
       {/* <UserCredencialsForm /> */}
     </>
   );

@@ -10,27 +10,35 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import InvitationsApi from "../../api/invitations";
 import useUsers from "../../hooks/useUsers";
 import { useRouter } from "next/router";
+import useUserData from "../../hooks/useUser";
 export default function AddUserToTeamDialog() {
+  const [open, setOpen] = useState(false);
+  const [newTeammate, setNewTeammate] = useState("");
   const router = useRouter();
   const { id } = router.query;
-  const mutation = useMutation(InvitationsApi.create);
+  const mutation = useMutation(InvitationsApi.create, {
+    onSuccess: () => {
+      alert("Invitation sent");
+      // refetchTeam();
+      setNewTeammate("");
+      // refetchInvites();
+      setOpen(false);
+    },
+    onError: (error) => {
+      alert(error?.response?.data?.message);
+    }
+  });
   const addTeammate = () => {
     mutation.mutate({ email: newTeammate, teamId: id });
-    setOpen(false);
   };
   const { getAll } = useUsers();
-  const [users, setUsers] = useState([]);
-  const [newTeammate, setNewTeammate] = useState("");
-  const [open, setOpen] = React.useState(false);
-  const emails = users.map(({ email }) => email);
 
-  useEffect(() => {
-    getAll().then((data) => setUsers(data));
-  });
+  const { data: users, refetch } = useQuery("users", getAll);
+  const emails = users?.map(({ email }) => email);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -55,7 +63,7 @@ export default function AddUserToTeamDialog() {
           <Autocomplete
             onChange={(event, value) => setNewTeammate(value)}
             id='checkboxes-tags-demo'
-            options={emails}
+            options={emails || []}
             getOptionLabel={(option) => option}
             style={{ width: 200 }}
             renderInput={(params) => (

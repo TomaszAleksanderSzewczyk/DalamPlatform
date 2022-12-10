@@ -43,6 +43,7 @@ export default nc()
     const name = req.body.name;
     const description = req.body.description;
     const users = req.body.users;
+    const avatar = req.body.avatar;
     const technologies = req.body.technologies;
 
     const client = await connectToDatabase();
@@ -51,22 +52,26 @@ export default nc()
     const teamsCollection = client.db().collection("teams");
 
     const user = await usersCollection.findOne({ email });
-    const update = {
-      name,
-      description,
-      users,
-      technologies,
-    };
-
+    const update = {};
+    
     if (name) {
-      console.log("name", name);
       update.name = name;
     }
-
     if (description) {
-      console.log("description", description);
       update.description = description;
     }
+    if (avatar) {
+      update.avatar = avatar;
+    }
+
+    if (technologies) {
+      update.technologies = technologies;
+    }
+
+
+    
+    console.log(update)
+
     if (users) {
       console.log("users");
       for (const user of users) {
@@ -102,8 +107,8 @@ export default nc()
       update.technologies = technologies;
     }
 
-    await teamsCollection.updateOne(
-      { _id: id },
+    const result = await teamsCollection.updateOne(
+      { _id: ObjectId(id) },
       {
         $set: {
           ...update,

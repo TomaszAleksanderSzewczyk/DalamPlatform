@@ -2,6 +2,7 @@ import { connectToDatabase } from "../../../lib/db";
 import nc from "next-connect";
 import { getSession } from "next-auth/react";
 import { mapUser } from "../../../utils/api/mapUser";
+import { ObjectId } from "mongodb";
 
 export default nc().get(async (req, res) => {
   const session = await getSession({ req: req });

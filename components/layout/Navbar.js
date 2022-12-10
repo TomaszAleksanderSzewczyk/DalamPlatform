@@ -13,7 +13,8 @@ import Link from "next/link";
 import styles from "./Navbar.module.css";
 import useUserData from "../../hooks/useUser";
 export function Navbar() {
-  const { userData } = useUserData();
+  const { userData, isLogged } = useUserData();
+  console.log(isLogged);
   const router = useRouter();
   const { update } = useSession();
   const handleLogOut = async () => {
@@ -48,22 +49,26 @@ export function Navbar() {
               Invitations
             </Button>
           </Link>
-          <Link href={`/teams/${userData?.team || "new"}`}>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              {userData?.team ? "my Team" : "create team"}
-            </Button>
-          </Link>
-          <Link href='/profile'>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              Profile
-            </Button>
-          </Link>
+          {isLogged && (
+            <Link href={`/teams/${userData?.team || "new"}`}>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                {userData?.team ? "my Team" : "create team"}
+              </Button>
+            </Link>
+          )}
+          {isLogged && (
+            <Link href='/profile'>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                Profile
+              </Button>
+            </Link>
+          )}
           <Link href='/users'>
             <Button
               sx={{ backgroundColor: "white", color: "black", border: 3 }}
@@ -88,24 +93,36 @@ export function Navbar() {
               Tasks
             </Button>
           </Link>
-          <Link href='/settings'>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              Settings
-            </Button>
-          </Link>
-
-          <Link href='/login'>
-            <Button
-              sx={{ border: 3, borderColor: "black" }}
-              onClick={handleLogOut}
-              color='inherit'
-            >
-              Logout
-            </Button>
-          </Link>
+          {isLogged && (
+            <Link href='/settings'>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                Settings
+              </Button>
+            </Link>
+          )}
+          {isLogged ? (
+            <Link href='/login'>
+              <Button
+                sx={{ border: 3, borderColor: "black" }}
+                onClick={handleLogOut}
+                color='inherit'
+              >
+                Logout
+              </Button>
+            </Link>
+          ) : (
+            <Link href='/login'>
+              <Button
+                sx={{ border: 3, borderColor: "black" }}
+                color='inherit'
+              >
+                Login
+              </Button>
+            </Link>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

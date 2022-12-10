@@ -31,6 +31,7 @@ const useUserData = () => {
     update,
     userData,
     isLoading,
+    isLogged: userData?._id && session,
     getOneFromList,
   };
 };

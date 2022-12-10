@@ -12,6 +12,7 @@ import {
   Button,
 } from "@mui/material";
 import NavbarTask from "../../components/taskNavbar/navbarTask";
+import Assignement from "../../components/assignements/Assignement";
 export default function Teams() {
   const { getAll, deleteOne } = useTaskData();
   const { userData } = useUserData();
@@ -41,6 +42,7 @@ export default function Teams() {
               <a>{task.name}</a>
             </Link>
             <pre>{JSON.stringify(task, null, 2)}</pre>
+            <Assignement task={task} />
           </div>
         ))}
       </div>

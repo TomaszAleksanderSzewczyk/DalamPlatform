@@ -20,6 +20,9 @@ const useTeamData = () => {
     return fetch(`/api/teams/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
     }).then((res) => res.json());
   }, []);
 

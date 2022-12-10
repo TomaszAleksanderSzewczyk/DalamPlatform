@@ -6,6 +6,7 @@ import { ThemeProvider } from 'styled-components'
 import { createTheme } from "@mui/material";
 import Navbar from "../components/layout/Navbar";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import '../styles/globals.css';
 
 const muiBaseTheme = createTheme();
 

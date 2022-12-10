@@ -29,6 +29,9 @@ console.log(userData?.linkedIn)
       <Grid item md={12} lg={12} sm={12} >
       <Avatar/>
       </Grid>
+      <pre>
+        {JSON.stringify(userData, null, 2)}
+      </pre>
       <Grid item md={12} lg={12} sm={12} >
       <div className={styles.credentials}>
       

@@ -45,12 +45,7 @@ export default nc()
     }
 
     const user = await usersCollection.findOne({ email: session.user.email });
-
-    if (task.owner.toString() !== user._id.toString()) {
-      res.status(403).json({ message: "Not authorized!" });
-      client.close();
-      return;
-    }
+    console.log(req.body);
     console.log("reqbody", req.body.team);
     const name = req.body.name;
     console.log("NAMEEEEEEE", name);
@@ -58,7 +53,41 @@ export default nc()
     const selectedTeam = req.body.team;
     console.log(selectedTeam, "selected Team");
     const isCompleted = req.body.isCompleted;
+    const offer = req.body.offer;
     const salary = req.body.salary;
+    const link = req.body.link;
+    console.log(link);
+
+    if (link) {
+      console.log(user.team, task.team);
+      if (user.team.toString() !== task.team.toString()) {
+        res.status(403).json({ message: "Not authorized!" });
+        client.close();
+        return;
+      }
+      const update = {
+        link,
+        isCompleted: true
+      };
+
+      const result = await tasksCollection.updateOne(
+        { _id: ObjectId(id) },
+        {
+          $set: update,
+        }
+      );
+  
+      client.close();
+      res.status(200).json(result);
+      return
+    } 
+
+    if (task.owner.toString() !== user._id.toString()) {
+      res.status(403).json({ message: "Not authorized!" });
+      client.close();
+      return;
+    }
+
     const update = {};
     if (name) {
       update.name = name;
@@ -68,6 +97,9 @@ export default nc()
     }
     if (selectedTeam) {
       update.team = selectedTeam;
+    }
+    if (offer) {
+      update.offer = offer;
     }
     if (isCompleted) {
       update.isCompleted = isCompleted;

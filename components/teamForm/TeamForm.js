@@ -59,6 +59,7 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
               fullWidth
               id='team-name'
               label='Team Name'
+              value={teamName}
               name='team-name'
               autoFocus
               onChange={(e) => setTeamName(e.target.value)}
@@ -70,6 +71,7 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
               fullWidth
               name=''
               label='Description'
+              value={description}
               type='text'
               id='description'
               onChange={(e) => setDescription(e.target.value)}

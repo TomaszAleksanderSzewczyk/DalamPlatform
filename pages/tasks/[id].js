@@ -11,48 +11,62 @@ import useUserData from "../../hooks/useUser";
 import OfferForm from "../../components/offers/OfferForm";
 import { Container, CssBaseline } from "@mui/material";
 import TaskForm from "../../components/tasks/TaskForm";
+import OfferPreview from "../../components/offers/OfferPreview";
 
 function TeamPage(props) {
   const { userData } = useUserData();
   const { query } = useRouter();
   const { getOne, update } = useTaskData();
-  const { getAll } = useOffersData();
-  const { data: task } = useQuery(["task", query.id], () => getOne(query.id));
+  const { getAll, getOne: getOffer } = useOffersData();
+  const { data: task, refetch } = useQuery(["task", query.id], () => getOne(query.id));
+  const { data: offer } = useQuery(["offer", task?.offer], () => getOffer(task?.offer), {
+    enabled: !!task?.offer
+  });
   const { data: offers } = useQuery(["offers", query.id], () =>
     getAll({
       task: query.id,
     })
   );
-  const { mutate: accept } = useMutation(update);
+  const { mutate: accept } = useMutation(vars => update(vars.id, vars));
 
   const handleAccept = (offer) => {
-    accept(offer._id, {
+    accept({
+      id: query.id,
       isAccepted: true,
       team: offer.team,
-    });
+      offer: offer._id,
+    }, {
+      onSettled: () => refetch()
+    })
   };
+
+  console.log(offers);
 
   return (
     <Container component='main' maxWidth='xs'>
-      <div className='taskName'>{task?.name}</div>
-      <hr />
-      <div className='taskName'>{task?.description}</div>
-      <hr />
-      <div className='taskName'>{task?.salary}</div>
+      {task ? (
+        <div>
+          <div className='taskName'>{task?.name}</div>
+          <hr />
+          <div className='taskName'>{task?.description}</div>
+          <hr />
+          <div className='taskName'>{task?.salary}</div>
+          <pre>
+            {JSON.stringify(task, null, 2)}
+          </pre>
+        </div>
+      ) : "Loading..."}
+      {offer && (
+        <div>
+          <h3>Accepted offer</h3>
+          <OfferPreview offer={offer} task={task} />
+        </div>
+      )}
       <CssBaseline />
       <div>
         <h2>Offers</h2>
         {offers?.map((offer) => (
-          <div key={offer._id}>
-            <div>Price: {offer.price}</div>
-            <div>Description: {offer.description}</div>
-            {offer.isAccepted && <div>Accepted</div>}
-            {!task?.team && task?.owner === userData?._id && (
-              <button onClick={() => handleAccept(offer._id)}>Accept</button>
-            )}
-            {offer.owner === userData?._id && offer && <OfferForm {...offer} />}
-            <hr />
-          </div>
+          <OfferPreview offer={offer} task={task} key={offer._id} onAccept={handleAccept} />
         ))}
       </div>
       {task?.owner === userData?._id && task && (

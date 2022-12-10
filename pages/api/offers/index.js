@@ -66,28 +66,28 @@ export default nc()
     const team = await teamsCollection.findOne({ _id: ObjectId(teamId) });
 
     if (team.owner.toString() !== user._id.toString()) {
+      client.close();
       res.status(401).json({
         message: "You can't offer when you are not owner of the team!",
       });
-      client.close();
       return;
     }
 
     console.log("test3");
     console.log("req body", req.body);
     const result = await offersCollection.insertOne({
-      team: user._id,
+      team: teamId,
       description,
       price,
+      owner: user._id,
       task,
     });
-    const result1 = await tasksCollection.insertOne({
-      team: user._id,
-      description,
-      price,
-      task,
-    });
+    // const result1 = await tasksCollection.insertOne({
+    //   team: user._id,
+    //   description,
+    //   price,
+    //   task,
+    // });
     client.close();
     res.status(200).json(result);
-    res.status(200).json(result1);
   });
