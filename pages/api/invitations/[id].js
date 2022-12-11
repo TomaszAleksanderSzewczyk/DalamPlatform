@@ -47,7 +47,7 @@ export default nc().post(async (req, res) => {
 
   team.users = [...(team.users || []), _id];
 
-  await teamsCollection.updateOne({ _id: invitation.teamId }, { $set: team });
+  await teamsCollection.updateOne({ _id: ObjectId(invitation.teamId) }, { $set: team });
 
   await invitationsCollection.deleteMany({ email: session.user.email });
   await usersCollection.updateOne(

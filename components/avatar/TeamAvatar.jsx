@@ -4,7 +4,9 @@ import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { Button, Grid } from "@mui/material";
 import PortraitIcon from "@mui/icons-material/Portrait";
-export default function AvatarComponent({ src, onUpdate, isEditable = false, ...props }) {
+export default function AvatarComponent() {
+    const { update, userData } = useUserData();
+
     const uploadPhoto = async (e) => {
         const file = e.target.files?.[0];
         const filename = encodeURIComponent(file.name);
@@ -25,7 +27,9 @@ export default function AvatarComponent({ src, onUpdate, isEditable = false, ...
             body: formData,
         });
 
-        onUpdate(url + fields.key);
+        update({
+            avatar: url + fields.key,
+        });
 
         if (upload.ok) {
             console.log("Uploaded successfully!");
@@ -35,28 +39,25 @@ export default function AvatarComponent({ src, onUpdate, isEditable = false, ...
     };
     return (
         <Grid container spacing={1}>
-            {src ? (
+            {userData?.avatar ? (
                 <>
                     <div className={styles.avatar369}>
                         <Avatar
                             sx={{ width: 400, height: 400 }}
-                            alt='Avatar'
-                            src={src}
-                            {...props}
+                            alt='Remy Sharp'
+                            src={userData.avatar}
                         />
-                        {isEditable && (
-                          <Button
-                              startIcon={<PortraitIcon />}
-                              className={styles.avatarButton}
-                              sx={{ borderRadius: 28 }}
-                              onChange={uploadPhoto}
-                              variant='contained'
-                              component='label'
-                          >
-                              Change
-                              <input type='file' hidden accept='image/png, image/jpeg' />
-                          </Button>
-                        )}
+                        <Button
+                            startIcon={<PortraitIcon />}
+                            className={styles.avatarButton}
+                            sx={{ borderRadius: 28 }}
+                            onChange={uploadPhoto}
+                            variant='contained'
+                            component='label'
+                        >
+                            Change
+                            <input type='file' hidden accept='image/png, image/jpeg' />
+                        </Button>
                     </div>
                 </>
             ) : (
@@ -64,22 +65,19 @@ export default function AvatarComponent({ src, onUpdate, isEditable = false, ...
                     <Avatar
                         sx={{ width: 400, height: 400 }}
                         alt='Remy Sharp'
-                        {...props}
                         src="https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg"
                     />
-                    {isEditable && (
-                      <Button
+                    <Button
                         startIcon={<PortraitIcon />}
                         className={styles.avatarButton}
                         sx={{ borderRadius: 28 }}
                         onChange={uploadPhoto}
                         variant='contained'
                         component='label'
-                      >
-                          Change
-                          <input type='file' hidden accept='image/png, image/jpeg' />
-                      </Button>
-                    )}
+                    >
+                        Change
+                        <input type='file' hidden accept='image/png, image/jpeg' />
+                    </Button>
                 </div>
             )}
         </Grid>

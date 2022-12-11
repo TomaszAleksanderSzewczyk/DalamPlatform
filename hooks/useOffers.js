@@ -1,23 +1,26 @@
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 
-const useTeamData = () => {
+const useOffersData = () => {
   const getOne = useCallback((id) => {
-    return fetch("/api/teams/" + id).then((res) => res.json());
+    return fetch("/api/offers/" + id).then((res) => res.json());
   }, []);
 
-  const getAll = useCallback(() => {
-    return fetch("/api/teams").then((res) => res.json());
+  const getAll = useCallback((query) => {
+    console.log("pobierz wszystkie ofersy");
+    return fetch("/api/offers?" + new URLSearchParams(query).toString()).then(
+      (res) => res.json()
+    );
   }, []);
 
   const deleteOne = useCallback((id) => {
-    return fetch("/api/teams/" + id, {
+    return fetch("/api/offers/" + id, {
       method: "DELETE",
     }).then((res) => res.json());
   }, []);
 
   const update = useCallback((id, data) => {
-    return fetch(`/api/teams/${id}`, {
+    return fetch(`/api/offers/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
       headers: {
@@ -27,7 +30,7 @@ const useTeamData = () => {
   }, []);
 
   const create = useCallback((data) => {
-    return fetch(`/api/teams`, {
+    return fetch(`/api/offers`, {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
@@ -45,4 +48,4 @@ const useTeamData = () => {
   };
 };
 
-export default useTeamData;
+export default useOffersData;

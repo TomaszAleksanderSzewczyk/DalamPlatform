@@ -1,35 +1,37 @@
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { useState } from "react";
-import Alert from "@mui/material/Alert";
-import useUser from "../../hooks/useUser";
-import useTeams from "../../hooks/useTeams";
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import useOffersData from "../../hooks/useOffers";
 
-export default function TeamForm({ properties = {}, isEdit = false }) {
-  const { create, update } = useTeams();
-  const { refetch } = useUser();
-  const [teamName, setTeamName] = useState(properties.teamName);
+const OfferForm = (properties = {}) => {
+  const isEdit = !!properties._id;
+  const { create, update } = useOffersData();
+  const [price, setPrice] = useState(properties.price || "");
+  const [description, setDescription] = useState(properties.description || "");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [description, setDescription] = useState(properties.description);
-  const { push } = useRouter();
-  const handleAdd = (e) => {
+  const { query } = useRouter();
+  console.log(query);
+
+  const handleSave = (e) => {
     setError("");
     setIsLoading(true);
     e.preventDefault();
-    const newData = { name: teamName, description };
+    const newData = { price, description, task: query.id };
 
     const promise = isEdit ? update(properties._id, newData) : create(newData);
 
     promise
       .then((data) => {
-        refetch();
-        push("/teams/" + data.insertedId);
+        alert(JSON.stringify(data, null, 2));
       })
       .catch((e) => setError(e.message))
       .finally(() => setIsLoading(false));
@@ -48,30 +50,30 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
         }}
       >
         <Typography component='h1' variant='h5'>
-          {isEdit ? "Edit Team" : "Create Team"}
+          {isEdit ? "Edit Offer" : "Create Offer"}
         </Typography>
         {error && <Alert severity='error'>{error}</Alert>}
-        <form onSubmit={handleAdd}>
+        <form onSubmit={handleSave}>
           <Box noValidate sx={{ mt: 1 }}>
             <TextField
               margin='normal'
               required
               fullWidth
-              id='team-name'
-              label='Team Name'
-              value={teamName}
-              name='team-name'
+              id='price'
+              label='Price'
+              value={price}
+              name='price'
               autoFocus
-              onChange={(e) => setTeamName(e.target.value)}
+              onChange={(e) => setPrice(e.target.value)}
             />
 
             <TextField
               margin='normal'
               required
               fullWidth
+              value={description}
               name=''
               label='Description'
-              value={description}
               type='text'
               id='description'
               onChange={(e) => setDescription(e.target.value)}
@@ -84,11 +86,13 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
               sx={{ mt: 3, mb: 2 }}
               disabled={isLoading}
             >
-              {isEdit ? "Edit Team" : "Create Team"}
+              {isEdit ? "Edit Offer" : "Create Offer"}
             </Button>
           </Box>
         </form>
       </Box>
     </Container>
   );
-}
+};
+
+export default OfferForm;
