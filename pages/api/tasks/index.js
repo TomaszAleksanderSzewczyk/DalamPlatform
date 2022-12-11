@@ -8,7 +8,7 @@ export default nc()
     const id = req.query.id;
     const owner = req.query.owner;
     const team = req.query.team;
-
+    console.log("pobieraj wszystkie");
     const client = await connectToDatabase();
 
     const tasksCollection = client.db().collection("tasks");
@@ -30,6 +30,7 @@ export default nc()
     const teams = await tasksCollection.find(query).toArray();
 
     client.close();
+    console.log(teams);
     res.status(200).json(teams);
   })
   .post(async (req, res) => {

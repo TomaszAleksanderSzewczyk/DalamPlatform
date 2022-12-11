@@ -30,7 +30,7 @@ export default function Teams() {
     deleteTask(id);
     refetch();
   };
-
+  console.log("assignments", assignements);
   return (
     <div>
       <NavbarTask />

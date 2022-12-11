@@ -1,0 +1,20 @@
+.taskName {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.description {
+  font-size: 16px;
+  font-weight: normal;
+  color: #000304;
+  text-align: left;
+  font-style: italic;
+}
+
+.links:hover {
+  border: 2px solid black;
+  background-color: black;
+  color: white;
+}
