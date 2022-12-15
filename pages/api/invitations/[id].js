@@ -19,7 +19,7 @@ export default nc().post(async (req, res) => {
   const invitationsCollection = client.db().collection("invitations");
   const teamsCollection = client.db().collection("teams");
 
-  const { _id } = usersCollection.findOne({ email: session.user.email });
+  const user = usersCollection.findOne({ email: session.user.email });
 
   const invitation = await invitationsCollection.findOne({
     _id: ObjectId(req.query.id),
@@ -45,9 +45,12 @@ export default nc().post(async (req, res) => {
     _id: ObjectId(invitation.teamId),
   });
 
-  team.users = [...(team.users || []), _id];
+  team.users = [...(team.users || []), user._id];
 
-  await teamsCollection.updateOne({ _id: ObjectId(invitation.teamId) }, { $set: team });
+  await teamsCollection.updateOne(
+    { _id: ObjectId(invitation.teamId) },
+    { $set: team }
+  );
 
   await invitationsCollection.deleteMany({ email: session.user.email });
   await usersCollection.updateOne(
