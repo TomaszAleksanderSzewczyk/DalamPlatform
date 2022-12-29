@@ -68,6 +68,7 @@ const OfferForm = (properties = {}) => {
             />
 
             <TextField
+              role='description'
               margin='normal'
               required
               fullWidth

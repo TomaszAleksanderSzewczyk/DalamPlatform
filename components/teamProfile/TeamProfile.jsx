@@ -1,9 +1,21 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styles from "./TeamProfile.module.css";
+import stylesUser from "../profile/user-profile.module.css";
 import { signOut, useSession } from "next-auth/react";
 import useUserData from "../../hooks/useUser";
-import { Chip, Button, Grid, Autocomplete, TextField } from "@mui/material";
+import {
+  Chip,
+  Button,
+  Grid,
+  Autocomplete,
+  TextField,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  CardActions,
+} from "@mui/material";
 import { useRef } from "react";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import useTeamData from "../../hooks/useTeams";
@@ -18,21 +30,69 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import AddUserToTeamDialog from "../Dialog/AddUserToTeamDialog";
 import DisplayInvitations from "../Dialog/DisplayInvitationsDialog";
 import AvatarComponent from "../avatar";
+import Link from "next/link";
 const TeamMember = ({ user, refresh }) => {
   const { data, isLoading } = useQuery(["user", user], () =>
     UsersApi.getOne(user)
   );
   const { mutate, isLoading: isOngoing } = useMutation(InvitationsApi.delete);
-
+  console.log("DATAAAAA", data);
   return (
-    <div>
-      {isLoading ? "Loading..." : data?.data?.email} &nbsp;
-      {data && (
-        <button onClick={() => mutate(user)} disabled={isOngoing}>
-          Remove
-        </button>
-      )}
-    </div>
+    <Grid container spacing={1}>
+      <Grid item md={12} lg={12} sm={12} key={user._id}>
+        <Card
+          sx={{
+            maxHeight: 400,
+            background: "#F3F2EF",
+            border: 2,
+          }}
+        >
+          <CardMedia
+            component='img'
+            height='160'
+            image={
+              data?.data?.avatar
+                ? data?.data?.avatar
+                : "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg"
+            }
+            alt='green iguana'
+          />
+          <CardContent>
+            <Typography gutterBottom variant='h5' component='div'>
+              {!data?.data?.firstName || !data?.data?.lastName
+                ? `User ${user._id}`
+                : `${data?.data?.firstName} ${data?.data?.lastName}`}
+            </Typography>
+            <Typography variant='body2' color='text.secondary'>
+              {data?.data?.description}
+              {data?.data?.technologies.map((item) => {
+                return (
+                  <Chip
+                    key={item}
+                    sx={{
+                      marginLeft: 1,
+                      marginBottom: 1,
+                      width: 120,
+                      fontSize: 16,
+                    }}
+                    color='primary'
+                    label={item}
+                  />
+                );
+              })}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Link href={`/users/${data?.data?._id}`}>
+              <Button size='small'>Profile</Button>
+            </Link>
+            <Button onClick={() => mutate(user)} disabled={isOngoing}>
+              Remove
+            </Button>
+          </CardActions>
+        </Card>
+      </Grid>
+    </Grid>
   );
 };
 
@@ -45,8 +105,8 @@ function TeamProfile() {
   const router = useRouter();
   const { id } = router.query;
   const { data: teamData, isLoading, refetch: refetchTeam } = useTeamQuery(id);
-  const { mutate: updateTeam } = useMutation(data => update(id, data), {
-    onSettled: refetchTeam
+  const { mutate: updateTeam } = useMutation((data) => update(id, data), {
+    onSettled: refetchTeam,
   });
 
   const { data: teamInvitations, refetch: refetchInvites } = useQuery(
@@ -78,7 +138,7 @@ function TeamProfile() {
   console.log(teamInvitations);
 
   return (
-    <>
+    <div className={stylesUser.center}>
       <Grid item sx={{ marginLeft: 0, marginRight: "auto" }}>
         {id !== "new" && isOwner && (
           <div style={{ display: "flex" }}>
@@ -96,18 +156,14 @@ function TeamProfile() {
           </div>
         )}
       </Grid>
-      <AvatarComponent src={teamData?.avatar} isEditable={isOwner} onUpdate={src => updateTeam({ avatar: src })} />
-      <div className={styles.credentials}>
-        {id !== "new" && isOwner && (
-          <div>
-            {teamData?.users?.map((user) => (
-              <TeamMember user={user} key={user} refresh={refetchTeam} />
-            ))}
-          </div>
-        )}
-      </div>
-      <div className={styles.teamName}>
-        <small>{teamData?.owner === userData?.id ? "Your team" : ""}</small>
+      <AvatarComponent
+        src={teamData?.avatar}
+        isEditable={isOwner}
+        onUpdate={(src) => updateTeam({ avatar: src })}
+      />
+
+      <div className={stylesUser.credentials}>
+        {teamData?.owner === userData?.id ? "Your team" : ""}
         {`${teamData?.name}`}
       </div>
       <div className={styles.description}>
@@ -153,25 +209,23 @@ function TeamProfile() {
         </div>
       </div>
       <div className={styles.technologies}>
-        USERS
-        <div>
-          {userData?.linkedIn && (
-            <Button
-              startIcon={<TwitterIcon />}
-              className={styles.avatarButton}
-              sx={{ borderRadius: 28 }}
-              variant='contained'
-              component='label'
-            >
-              LinkedIn
-            </Button>
+        Members
+        <div className={styles.credentials}>
+          {id !== "new" && isOwner && (
+            <div>
+              {teamData?.users?.map((user) => (
+                <TeamMember user={user} key={user} refresh={refetchTeam} />
+              ))}
+            </div>
           )}
         </div>
       </div>
 
-      {userData?._id === teamData?.owner && teamData && <TeamForm properties={teamData} isEdit />}
+      {userData?._id === teamData?.owner && teamData && (
+        <TeamForm properties={teamData} isEdit />
+      )}
       {/* <UserCredencialsForm /> */}
-    </>
+    </div>
   );
 }
 

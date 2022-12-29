@@ -5,10 +5,12 @@ import { useQuery } from "react-query";
 const useUserData = () => {
   const session = useSession();
   console.log(session);
-  const { data: userData, isLoading, refetch } = useQuery(
-    ["user", session?.user?.id],
-    () => fetch("/api/user")
-      .then((res) => res.json())
+  const {
+    data: userData,
+    isLoading,
+    refetch,
+  } = useQuery(["user", session?.user?.id], () =>
+    fetch("/api/user").then((res) => res.json())
   );
   const getOneFromList = useCallback((id) => {
     return fetch("/api/listUser/" + id).then((res) => res.json());
@@ -16,6 +18,7 @@ const useUserData = () => {
 
   const update = useCallback(
     (data) => {
+      console.log("DATAAAAA", data);
       return fetch("/api/user", {
         method: "PATCH",
         body: JSON.stringify(data),

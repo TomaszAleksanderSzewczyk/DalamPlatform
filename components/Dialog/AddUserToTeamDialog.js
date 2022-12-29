@@ -30,7 +30,7 @@ export default function AddUserToTeamDialog() {
     },
     onError: (error) => {
       alert(error?.response?.data?.message);
-    }
+    },
   });
   const addTeammate = () => {
     mutation.mutate({ email: newTeammate, teamId: id });

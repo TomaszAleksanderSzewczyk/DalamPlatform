@@ -25,7 +25,7 @@ export default function Teams() {
   );
 
   const { mutate: deleteTask } = useMutation(deleteOne);
-
+  console.log(userData);
   const handleDelete = (id) => {
     deleteTask(id);
     refetch();
@@ -33,22 +33,60 @@ export default function Teams() {
   console.log("assignments", assignements);
   return (
     <div>
-      <NavbarTask />
       <div>
-        Your assignements:
+        <Button size='small' variant='outlined'>
+          Your Assignments
+        </Button>
         {assignements?.map((task) => (
           <div key={task._id}>
-            <Link href={`/tasks/${task._id}`}>
-              <a>{task.name}</a>
-            </Link>
-            <pre>{JSON.stringify(task, null, 2)}</pre>
-            <Assignement task={task} />
+            <Card
+              sx={{
+                minWidth: 275,
+                marginBottom: 2,
+                marginTop: 2,
+                background: "#F3F2EF",
+                border: 1,
+              }}
+            >
+              <CardContent>
+                <Typography
+                  sx={{ fontSize: 14 }}
+                  color='text.secondary'
+                  gutterBottom
+                >
+                  Task {task._id}
+                </Typography>
+                <Typography variant='h5' component='div'></Typography>
+                <Typography sx={{ mb: 1.5 }} color='text.secondary'>
+                  <Link href={`/tasks/${task._id}`}>
+                    <a>{task.name}</a>
+                  </Link>
+                </Typography>
+                <Typography variant='body2'>{task.description}</Typography>
+                <Typography variant='body2'>
+                  {" "}
+                  Salary: {`${task.salary ? task.salary : "Undefined"} $`}
+                </Typography>
+                <Typography variant='body2'>
+                  {" "}
+                  Completed? {`${task.isCompleted === false ? "NO" : "YES"}`}
+                </Typography>
+                <Typography variant='body2'>
+                  {" "}
+                  Link to done task:{" "}
+                  {task?.link ? task?.link : "There is no solved task yet"}
+                </Typography>
+                <Assignement task={task} />
+              </CardContent>
+            </Card>
           </div>
         ))}
       </div>
 
       <div>
-        Your tasks:
+        <Button size='small' variant='outlined' sx={{ display: "flex" }}>
+          Your Tasks
+        </Button>
         {created?.map((task) => (
           <div key={task._id}>
             <div>

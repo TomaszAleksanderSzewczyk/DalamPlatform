@@ -17,19 +17,18 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 const TaskForm = (properties = {}) => {
   const isEdit = !!properties._id;
   const { create, update } = useTaskData();
-  const [startDate, setStartDateValue] = useState(null);
-  const [finishDate, setFinishDateValue] = useState(null);
   const [salary, setSalary] = useState(null);
   const [name, setName] = useState(properties.name || "");
   const [description, setDescription] = useState(properties.description || "");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [deadline, setDeadline] = useState(0);
   console.log(salary, "salary");
   const handleSave = (e) => {
     setError("");
     setIsLoading(true);
     e.preventDefault();
-    const newData = { name, description, salary };
+    const newData = { name, description, salary, deadline };
 
     const promise = isEdit ? update(properties._id, newData) : create(newData);
 
@@ -91,6 +90,19 @@ const TaskForm = (properties = {}) => {
               type='number'
               id='description'
               onChange={(e) => setSalary(e.target.value)}
+              InputProps={{
+                inputProps: { min: 0 },
+              }}
+            />
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              name=''
+              label='Estimated time in months'
+              type='number'
+              id='deadline'
+              onChange={(e) => setDeadline(e.target.value)}
               InputProps={{
                 inputProps: { min: 0 },
               }}

@@ -48,10 +48,12 @@ export default nc()
 
     const description = req.body.description;
     const salary = req.body.salary;
+    const deadline = req.body.deadline;
     console.log(description);
     console.log("name:", name);
     console.log("salary", salary);
     console.log("description", description);
+    console.log("deadline", deadline);
     // console.log(client);
 
     const usersCollection = client.db().collection("users");
@@ -66,6 +68,7 @@ export default nc()
       owner: user._id,
       description: description,
       salary: salary,
+      deadline: deadline,
       team: null,
       isCompleted: false,
     });

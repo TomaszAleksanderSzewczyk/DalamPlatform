@@ -2,6 +2,7 @@ import Link from "next/link";
 import useUserData from "../../hooks/useUser";
 import OfferForm from "./OfferForm";
 import styles from "../../styles/tasks.module.css";
+import { Button } from "@mui/material";
 const OfferPreview = ({ offer, task, onAccept }) => {
   const { userData } = useUserData();
   if (!offer) {
@@ -45,7 +46,9 @@ const OfferPreview = ({ offer, task, onAccept }) => {
         </div>
       )}
       {!task.team && task.owner === userData._id && (
-        <button onClick={() => onAccept(offer)}>Accept</button>
+        <Button variant='text' onClick={() => onAccept(offer)}>
+          Accept
+        </Button>
       )}
       {offer.owner === userData._id && offer && !task.team && (
         <OfferForm {...offer} />

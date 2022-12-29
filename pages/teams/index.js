@@ -39,7 +39,11 @@ export default function Teams() {
                 <CardMedia
                   component='img'
                   height='160'
-                  image='https://images.panda.org/assets/images/pages/welcome/orangutan_1600x1000_279157.jpg'
+                  image={
+                    team?.avatar
+                      ? team?.avatar
+                      : "https://www.evolvetraining.com/wp-content/uploads/2016/05/Team-Placeholder.jpg"
+                  }
                   alt='green iguana'
                 />
                 <CardContent>

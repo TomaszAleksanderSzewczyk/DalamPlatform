@@ -21,55 +21,42 @@ import Autocomplete from "@mui/material/Autocomplete";
 import useUserData from "../../hooks/useUser";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-
+import UsersApi from "../../api/users";
 export default function UserCredencialsForm({ properties }) {
+  const { userData, update } = useUserData();
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
   const checkedIcon = <CheckBoxIcon fontSize='small' />;
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [description, setDescription] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [technologies, setTechnologies] = useState([]);
-  const [linkedIn, setLinkedIn] = useState("s");
-
+  const [description, setDescription] = useState(userData?.description || "");
+  const [firstName, setFirstName] = useState(userData?.firstName || "");
+  const [lastName, setLastName] = useState(userData?.lastName || "");
+  const [technologies, setTechnologies] = useState(
+    userData?.technologies || []
+  );
+  const [linkedIn, setLinkedIn] = useState(userData?.linkedIn || "");
+  const [facebook, setFacebook] = useState(userData?.facebook || "");
+  const [discord, setDiscord] = useState(userData?.discord || "");
+  const [localization, setlocalization] = useState(
+    userData?.localization || ""
+  );
+  const [phoneNumber, setPhoneNumber] = useState(userData?.phoneNumber || "");
   const router = useRouter();
   const handleUpdate = () => {
-    update({ firstName, lastName, description, technologies, linkedIn });
-    router.replace("/profile");
-  };
-  const { userData, update } = useUserData();
-  const uploadPhoto = async (e) => {
-    const file = e.target.files?.[0];
-    const filename = encodeURIComponent(file.name);
-    const fileType = encodeURIComponent(file.type);
-
-    const res = await fetch(
-      `/api/photos?file=${filename}&fileType=${fileType}`
-    );
-    const { url, fields } = await res.json();
-    const formData = new FormData();
-
-    Object.entries({ ...fields, file }).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    const upload = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
     update({
-      avatar: url + fields.key,
+      firstName,
+      lastName,
+      description,
+      technologies,
+      linkedIn,
+      facebook,
+      discord,
+      phoneNumber,
+      localization,
     });
-
-    if (upload.ok) {
-      console.log("Uploaded successfully!");
-    } else {
-      console.error("Upload failed.");
-    }
+    router.replace("/profile");
   };
   return (
     <Container component='main' maxWidth='xs'>
@@ -108,6 +95,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='description'
             onChange={(e) => setLastName(e.target.value)}
+            defaultValue={userData?.lastName}
           />
           <TextField
             margin='normal'
@@ -118,6 +106,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='description'
             onChange={(e) => setDescription(e.target.value)}
+            defaultValue={userData?.description}
           />
           <TextField
             margin='normal'
@@ -127,8 +116,48 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='linkedIn'
             onChange={(e) => setLinkedIn(e.target.value)}
+            defaultValue={userData?.linkedIn}
           />
-
+          <TextField
+            margin='normal'
+            fullWidth
+            name=''
+            label='Discord Link'
+            type='text'
+            id='Discord'
+            onChange={(e) => setDiscord(e.target.value)}
+            defaultValue={userData?.discord}
+          />
+          <TextField
+            margin='normal'
+            fullWidth
+            name=''
+            label='Facebook Link'
+            type='text'
+            id='facebook'
+            onChange={(e) => setFacebook(e.target.value)}
+            defaultValue={userData?.facebook}
+          />
+          <TextField
+            margin='normal'
+            fullWidth
+            name=''
+            label='Localization'
+            type='text'
+            id='localization'
+            onChange={(e) => setlocalization(e.target.value)}
+            defaultValue={userData?.localization}
+          />
+          <TextField
+            margin='normal'
+            fullWidth
+            name=''
+            label='Phone Number'
+            type='text'
+            id='phoneNumber'
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            defaultValue={userData?.phoneNumber}
+          />
           <Autocomplete
             fullWidth
             onChange={(event, value) => setTechnologies(value)}
@@ -154,6 +183,7 @@ export default function UserCredencialsForm({ properties }) {
                 {...params}
                 label='Technologies'
                 placeholder='Choose technology'
+                defaultValue={userData?.technologies}
               />
             )}
           />

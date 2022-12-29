@@ -55,6 +55,7 @@ export default nc()
     const isCompleted = req.body.isCompleted;
     const offer = req.body.offer;
     const salary = req.body.salary;
+    const deadline = req.body.deadline;
     const link = req.body.link;
     console.log(link);
 
@@ -67,7 +68,7 @@ export default nc()
       }
       const update = {
         link,
-        isCompleted: true
+        isCompleted: true,
       };
 
       const result = await tasksCollection.updateOne(
@@ -76,11 +77,11 @@ export default nc()
           $set: update,
         }
       );
-  
+
       client.close();
       res.status(200).json(result);
-      return
-    } 
+      return;
+    }
 
     if (task.owner.toString() !== user._id.toString()) {
       res.status(403).json({ message: "Not authorized!" });
@@ -106,6 +107,9 @@ export default nc()
     }
     if (salary) {
       update.salary = salary;
+    }
+    if (deadline) {
+      update.deadline = deadline;
     }
 
     console.log(id, update, req.body);

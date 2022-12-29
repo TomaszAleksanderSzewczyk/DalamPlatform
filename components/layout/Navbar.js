@@ -8,7 +8,6 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 import useUserData from "../../hooks/useUser";
@@ -16,7 +15,7 @@ export function Navbar() {
   const { userData, isLogged } = useUserData();
   console.log(isLogged);
   const router = useRouter();
-  const { update } = useSession();
+
   const handleLogOut = async () => {
     await signOut({
       redirect: false,
@@ -41,14 +40,17 @@ export function Navbar() {
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
             DALAM
           </Typography>
-          <Link href='/profile/invitations'>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              Invitations
-            </Button>
-          </Link>
+          {isLogged && (
+            <Link href='/profile/invitations'>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                Invitations
+              </Button>
+            </Link>
+          )}
+
           {isLogged && (
             <Link href={`/teams/${userData?.team || "new"}`}>
               <Button
@@ -69,30 +71,37 @@ export function Navbar() {
               </Button>
             </Link>
           )}
-          <Link href='/users'>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              Users
-            </Button>
-          </Link>
-          <Link href='/teams'>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              Teams
-            </Button>
-          </Link>
-          <Link href='/tasks'>
-            <Button
-              sx={{ backgroundColor: "white", color: "black", border: 3 }}
-              color='inherit'
-            >
-              Tasks
-            </Button>
-          </Link>
+          {isLogged && (
+            <Link href='/users'>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                Users
+              </Button>
+            </Link>
+          )}
+          {isLogged && (
+            <Link href='/teams'>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                Teams
+              </Button>
+            </Link>
+          )}
+          {isLogged && (
+            <Link href='/tasks'>
+              <Button
+                sx={{ backgroundColor: "white", color: "black", border: 3 }}
+                color='inherit'
+              >
+                Tasks
+              </Button>
+            </Link>
+          )}
+
           {isLogged && (
             <Link href='/settings'>
               <Button
@@ -115,10 +124,7 @@ export function Navbar() {
             </Link>
           ) : (
             <Link href='/login'>
-              <Button
-                sx={{ border: 3, borderColor: "black" }}
-                color='inherit'
-              >
+              <Button sx={{ border: 3, borderColor: "black" }} color='inherit'>
                 Login
               </Button>
             </Link>

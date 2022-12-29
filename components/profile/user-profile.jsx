@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import TeamsApi from "../../api/teams";
 import { Grid } from "@mui/material";
 import { Link } from "@mui/material";
+import { EmojiEmotions, Facebook, Phone } from "@mui/icons-material";
 function UserProfile() {
   const session = useSession();
   console.log(session);
@@ -37,7 +38,6 @@ function UserProfile() {
             onUpdate={(src) => update({ avatar: src })}
           />
         </Grid>
-        <pre>{JSON.stringify(userData, null, 2)}</pre>
         <Grid item md={12} lg={12} sm={12}>
           <div className={styles.credentials}>
             {!userData?.firstName
@@ -72,24 +72,83 @@ function UserProfile() {
         <Grid item md={12} lg={12} sm={12}>
           <div className={styles.technologies}>
             Social Media
-            <div>
-              {userData?.linkedIn && (
-                <Link
-                  target='_blank'
-                  href={`https://${userData?.linkedIn}`}
-                  rel='noreferrer'
-                >
-                  <Button
-                    startIcon={<TwitterIcon />}
-                    className={styles.avatarButton}
-                    sx={{ borderRadius: 28 }}
-                    variant='contained'
-                    component='label'
+            <div className={styles.centerSocialMedia}>
+              <div className={styles.itemSocialMedia}>
+                {userData?.linkedIn && (
+                  <Link
+                    target='_blank'
+                    href={`https://${userData?.linkedIn}`}
+                    rel='noreferrer'
                   >
-                    LinkedIn
-                  </Button>
-                </Link>
+                    <Button
+                      startIcon={<TwitterIcon />}
+                      className={styles.avatarButton}
+                      sx={{ borderRadius: 28 }}
+                      variant='contained'
+                      component='label'
+                    >
+                      LinkedIn
+                    </Button>
+                  </Link>
+                )}
+              </div>
+              <div className={styles.itemSocialMedia}>
+                {userData?.facebook && (
+                  <Link
+                    target='_blank'
+                    href={`https://${userData?.facebook}`}
+                    rel='noreferrer'
+                  >
+                    <Button
+                      startIcon={<Facebook />}
+                      className={styles.avatarButton}
+                      sx={{ borderRadius: 28 }}
+                      variant='contained'
+                      component='label'
+                    >
+                      Facebook
+                    </Button>
+                  </Link>
+                )}
+              </div>
+              <div className={styles.itemSocialMedia}>
+                {userData?.discord && (
+                  <Link
+                    target='_blank'
+                    href={`https://${userData?.discord}`}
+                    rel='noreferrer'
+                  >
+                    <Button
+                      startIcon={<EmojiEmotions />}
+                      className={styles.avatarButton}
+                      sx={{ borderRadius: 28 }}
+                      variant='contained'
+                      component='label'
+                    >
+                      Discord
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className={styles.technologies}>
+            CONTACT
+            <div className={styles.itemLocalization}>
+              {userData?.localization && (
+                <div className={styles.localization}>
+                  Location: {userData?.localization}
+                </div>
               )}
+
+              <div className={styles.itemLocalization}>
+                {userData?.facebook && (
+                  <div className={styles.localization}>
+                    <Phone></Phone>
+                    {`   ${userData?.phoneNumber}`}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </Grid>

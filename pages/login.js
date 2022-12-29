@@ -43,13 +43,13 @@ function Login() {
   const [error, setError] = useState("");
   const { userData } = useUserData();
   const [isLoading, setIsLoading] = useState(false);
-  const [isRegister, setIsRegister ] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const router = useRouter();
 
   const handleSwap = (e) => {
     e.preventDefault();
     setIsRegister(!isRegister);
-  }
+  };
 
   useEffect(() => {
     getSession().then((session) => {
@@ -101,7 +101,7 @@ function Login() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component='h1' variant='h5'>
-          {!isRegister ? 'Sign In' : 'Sign Up'}
+          {!isRegister ? "Sign In" : "Sign Up"}
         </Typography>
         {error && <Alert severity='error'>{error}</Alert>}
         <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -128,7 +128,7 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
           {!isRegister && (
-              <FormControlLabel
+            <FormControlLabel
               control={<Checkbox value='remember' color='primary' />}
               label='Remember me'
             />
@@ -140,19 +140,17 @@ function Login() {
             variant='contained'
             sx={{ mt: 3, mb: 2 }}
           >
-            {isRegister ? 'Sign Up' : 'Sign In'}
+            {isRegister ? "Sign Up" : "Sign In"}
           </Button>
           <Grid container>
-            <Grid item xs>
-              {!isRegister && (
-                <Link href='#' variant='body2'>
-                  Forgot password?
-                </Link>
-              )}
-            </Grid>
+            <Grid item xs></Grid>
             <Grid item>
               <Link href='#' variant='body2'>
-                <a onClick={handleSwap}>{isRegister ? "Have an account? Sign in" : "Don't have an account? Sign Up"}</a>
+                <a onClick={handleSwap}>
+                  {isRegister
+                    ? "Have an account? Sign in"
+                    : "Don't have an account? Sign Up"}
+                </a>
               </Link>
             </Grid>
           </Grid>

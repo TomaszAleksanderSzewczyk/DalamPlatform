@@ -66,6 +66,11 @@ function TeamPage(props) {
           <hr />
           <div className='taskName'> Salary: {task?.salary} $</div>
           <hr />
+          <div className='taskName'>
+            {" "}
+            Estimated time: {task?.deadline} months{" "}
+          </div>
+          <hr />
           <Link href={`/users/${task?.owner}`}>
             <div
               style={{ cursor: "pointer", fontWeight: "bold" }}
@@ -94,7 +99,8 @@ function TeamPage(props) {
             <>
               <div style={{ fontWeight: "bold" }} className='taskName'>
                 {" "}
-                Link to done task: {`${task?.link}`}
+                Link to done task:{" "}
+                {`${task?.link ? task?.link : "There is no solve task yet"}`}
               </div>
               <hr />
             </>
