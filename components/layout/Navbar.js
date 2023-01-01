@@ -15,11 +15,13 @@ export function Navbar() {
   const { userData, isLogged } = useUserData();
   console.log(isLogged);
   const router = useRouter();
+  const { refetch } = useUserData();
 
   const handleLogOut = async () => {
     await signOut({
       redirect: false,
     });
+    refetch();
     setTimeout(() => {
       router.push("/login");
     }, 100);

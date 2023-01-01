@@ -19,7 +19,7 @@ export default nc().post(async (req, res) => {
   const invitationsCollection = client.db().collection("invitations");
   const teamsCollection = client.db().collection("teams");
 
-  const user = usersCollection.findOne({ email: session.user.email });
+  const user = await usersCollection.findOne({ email: session.user.email });
 
   const invitation = await invitationsCollection.findOne({
     _id: ObjectId(req.query.id),

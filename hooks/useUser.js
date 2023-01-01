@@ -34,7 +34,7 @@ const useUserData = () => {
     update,
     userData,
     isLoading,
-    isLogged: userData?._id && session,
+    isLogged: !!(userData?._id && session?.data),
     getOneFromList,
   };
 };

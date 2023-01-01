@@ -31,17 +31,17 @@ async function createUser(email, password) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Something went wrong!");
+    console.error(data.message || "Something went wrong!");
   }
 
   return data;
 }
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { refetch } = useUserData();
+  const [email, setEmail] = useState("slaczka.sebastian@gmail.com");
+  const [password, setPassword] = useState("test123");
   const [error, setError] = useState("");
-  const { userData } = useUserData();
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const router = useRouter();
@@ -55,36 +55,49 @@ function Login() {
     getSession().then((session) => {
       console.log(session);
       if (session) {
-        router.push("/");
+        router.push("/profile");
       }
     });
-  }, [router]);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isRegister) {
       const result = await createUser(email, password);
       console.log(result);
+
+      if (result.error) {
+        setError(result.error);
+      } else {
+        alert('Successfully registered, you can log in')
+      }
       return;
     }
+
+
     const result = await signIn("credentials", {
       redirect: false,
       email,
       password,
     });
+    await refetch();
+    console.log('result', result);
+
+
+    const userData = await fetch("/api/user").then((res) => res.json());
 
     if (!result.error) {
-      console.log(userData);
+      console.log(userData, 'userdata');
       // set some auth state
-      if (!userData?.firstName) {
-        router.replace("/credentials");
-      } else router.replace("/profile");
+        if (!userData?.firstName) {
+          router.push("/credentials");
+        } else router.push("/profile");
     }
 
     if (result.error) {
       setError(result.error);
     }
-  };
+};
 
   return (
     <Container component='main' maxWidth='xs'>
@@ -114,6 +127,7 @@ function Login() {
             name='email'
             autoComplete='email'
             autoFocus
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
@@ -124,6 +138,7 @@ function Login() {
             label='Password'
             type='password'
             id='password'
+            value={password}
             autoComplete='current-password'
             onChange={(e) => setPassword(e.target.value)}
           />

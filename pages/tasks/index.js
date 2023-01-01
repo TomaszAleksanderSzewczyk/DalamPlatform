@@ -23,6 +23,9 @@ export default function Teams() {
   const { data: created, refetch } = useQuery(["tasks", userData?._id], () =>
     getAll({ owner: userData?._id })
   );
+  const { data: allAvailable } = useQuery(["tasks"], () =>
+    getAll({ team: null })
+  );
 
   const { mutate: deleteTask } = useMutation(deleteOne);
   console.log(userData);
@@ -125,6 +128,46 @@ export default function Teams() {
                 </CardContent>
                 <CardActions>
                   <Button onClick={() => handleDelete(task._id)}>Delete</Button>
+                </CardActions>
+              </Card>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div>
+        Tasks available:
+        {allAvailable?.map((task) => (
+          <div key={task._id}>
+            <div>
+              <Card
+                sx={{
+                  minWidth: 275,
+                  marginBottom: 2,
+                  marginTop: 2,
+                  background: "#F3F2EF",
+                  border: 1,
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    sx={{ fontSize: 14 }}
+                    color='text.secondary'
+                    gutterBottom
+                  >
+                    Task {task._id}
+                  </Typography>
+                  <Typography variant='h5' component='div'></Typography>
+                  <Typography sx={{ mb: 1.5 }} color='text.secondary'>
+                    <Link href={`/tasks/${task._id}`}>
+                      <a>{task.name}</a>
+                    </Link>
+                  </Typography>
+                  <Typography variant='body2'>{task.description}</Typography>
+                </CardContent>
+                <CardActions>
+                  <Link href={`/tasks/${task._id}`}>
+                    <a>Show more</a>
+                  </Link>
                 </CardActions>
               </Card>
             </div>
