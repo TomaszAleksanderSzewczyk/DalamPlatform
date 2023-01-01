@@ -18,33 +18,32 @@ import { useRouter } from "next/router";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import Autocomplete from "@mui/material/Autocomplete";
-import useUserData from "../../hooks/useUser";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import UsersApi from "../../api/users";
-export default function UserCredencialsForm({ properties }) {
-  const { userData, update } = useUserData();
+export default function UserCredentialsForm({ properties, update }) {
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
   const checkedIcon = <CheckBoxIcon fontSize='small' />;
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [description, setDescription] = useState(userData?.description || "");
-  const [firstName, setFirstName] = useState(userData?.firstName || "");
-  const [lastName, setLastName] = useState(userData?.lastName || "");
+  const [description, setDescription] = useState(properties?.description || "");
+  const [firstName, setFirstName] = useState(properties?.firstName || "");
+  const [lastName, setLastName] = useState(properties?.lastName || "");
   const [technologies, setTechnologies] = useState(
-    userData?.technologies || []
+    properties?.technologies || []
   );
-  const [linkedIn, setLinkedIn] = useState(userData?.linkedIn || "");
-  const [facebook, setFacebook] = useState(userData?.facebook || "");
-  const [discord, setDiscord] = useState(userData?.discord || "");
+  const [linkedIn, setLinkedIn] = useState(properties?.linkedIn || "");
+  const [facebook, setFacebook] = useState(properties?.facebook || "");
+  const [discord, setDiscord] = useState(properties?.discord || "");
   const [localization, setlocalization] = useState(
-    userData?.localization || ""
+    properties?.localization || ""
   );
-  const [phoneNumber, setPhoneNumber] = useState(userData?.phoneNumber || "");
+  const [phoneNumber, setPhoneNumber] = useState(properties?.phoneNumber || "");
   const router = useRouter();
-  const handleUpdate = () => {
+  const handleUpdate = (e) => {
+    e.preventDefault();
     update({
       firstName,
       lastName,
@@ -83,7 +82,7 @@ export default function UserCredencialsForm({ properties }) {
             name='first-name'
             autoFocus
             onChange={(e) => setFirstName(e.target.value)}
-            defaultValue={userData?.firstName}
+            defaultValue={properties?.firstName}
           />
 
           <TextField
@@ -95,7 +94,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='description'
             onChange={(e) => setLastName(e.target.value)}
-            defaultValue={userData?.lastName}
+            defaultValue={properties?.lastName}
           />
           <TextField
             margin='normal'
@@ -106,7 +105,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='description'
             onChange={(e) => setDescription(e.target.value)}
-            defaultValue={userData?.description}
+            defaultValue={properties?.description}
           />
           <TextField
             margin='normal'
@@ -116,7 +115,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='linkedIn'
             onChange={(e) => setLinkedIn(e.target.value)}
-            defaultValue={userData?.linkedIn}
+            defaultValue={properties?.linkedIn}
           />
           <TextField
             margin='normal'
@@ -126,7 +125,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='Discord'
             onChange={(e) => setDiscord(e.target.value)}
-            defaultValue={userData?.discord}
+            defaultValue={properties?.discord}
           />
           <TextField
             margin='normal'
@@ -136,7 +135,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='facebook'
             onChange={(e) => setFacebook(e.target.value)}
-            defaultValue={userData?.facebook}
+            defaultValue={properties?.facebook}
           />
           <TextField
             margin='normal'
@@ -146,7 +145,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='localization'
             onChange={(e) => setlocalization(e.target.value)}
-            defaultValue={userData?.localization}
+            defaultValue={properties?.localization}
           />
           <TextField
             margin='normal'
@@ -156,7 +155,7 @@ export default function UserCredencialsForm({ properties }) {
             type='text'
             id='phoneNumber'
             onChange={(e) => setPhoneNumber(e.target.value)}
-            defaultValue={userData?.phoneNumber}
+            defaultValue={properties?.phoneNumber}
           />
           <Autocomplete
             fullWidth
@@ -183,7 +182,7 @@ export default function UserCredencialsForm({ properties }) {
                 {...params}
                 label='Technologies'
                 placeholder='Choose technology'
-                defaultValue={userData?.technologies}
+                defaultValue={properties?.technologies}
               />
             )}
           />

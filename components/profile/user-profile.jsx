@@ -18,7 +18,7 @@ import { Link } from "@mui/material";
 import { EmojiEmotions, Facebook, Phone } from "@mui/icons-material";
 function UserProfile() {
   const session = useSession();
-  console.log(session);
+  console.log(session, 'session');
 
   const { userData, update } = useUserData();
   const { data: invitations, refetch } = useQuery(

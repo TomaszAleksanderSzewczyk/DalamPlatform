@@ -3,7 +3,9 @@ import useTeamData from "../useTeams";
 
 const useTeamQuery = (id) => {
     const { getOne } = useTeamData();
-    const query = useQuery(["team", id], () => getOne(id));
+    const query = useQuery(["team", id], () => getOne(id), {
+        enabled: !!id
+    });
 
     return query;
 }

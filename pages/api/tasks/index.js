@@ -23,7 +23,7 @@ export default nc()
     }
 
     if (team) {
-      query.team = team;
+      query.team = team === 'null' ? null : ObjectId(team);
     }
 
     console.log(query);

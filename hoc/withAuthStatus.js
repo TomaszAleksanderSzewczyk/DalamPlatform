@@ -4,30 +4,24 @@ import useUserData from "../hooks/useUser"
 
 // if false, then totally separate
 const withAuthStatus = (Component, shouldBeLoggedIn = true) => {
+    console.log(Component.name, 'component')
     return (props) => {
         const { isLogged, isLoading } = useUserData();
+        console.log(isLogged, isLoading, 'isLogged, isLoading')
         const router = useRouter();
 
-        const isValid = !isLoading && (shouldBeLoggedIn && isLogged || !shouldBeLoggedIn && !isLogged);
-    
         useEffect(() => {
             if (isLoading) {
                 return;
             }
     
-            if (shouldBeLoggedIn) {
-                if (!isValid) {
-                    router.push('/login');
-                }
-                return;
+            if (shouldBeLoggedIn && !isLogged) {
+                router.push('/login');
             }
     
-            if (!isValid) {
-                router.push('/profile');
-            }
-        }, [isValid, isLoading, shouldBeLoggedIn, router.push]);
+        }, [isLoading, shouldBeLoggedIn, router.push]);
     
-        if (isValid) {
+        if (shouldBeLoggedIn && isLogged || (!shouldBeLoggedIn && !isLogged)) {
             return <Component {...props} />
         }
     

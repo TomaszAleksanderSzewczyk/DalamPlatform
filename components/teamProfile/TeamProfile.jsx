@@ -16,7 +16,6 @@ import {
   Typography,
   CardActions,
 } from "@mui/material";
-import { useRef } from "react";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import useTeamData from "../../hooks/useTeams";
 import TeamForm from "../teamForm/TeamForm";
@@ -24,22 +23,31 @@ import useTeamQuery from "../../hooks/queries/useTeamQuery";
 import { useMutation, useQuery } from "react-query";
 import InvitationsApi from "../../api/invitations";
 import UsersApi from "../../api/users";
-import useUsers from "../../hooks/useUsers";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import AddUserToTeamDialog from "../Dialog/AddUserToTeamDialog";
 import DisplayInvitations from "../Dialog/DisplayInvitationsDialog";
 import AvatarComponent from "../avatar";
 import Link from "next/link";
-const TeamMember = ({ user, refresh }) => {
+const TeamMember = ({ team, user, refresh, isOwner }) => {
   const { data, isLoading } = useQuery(["user", user], () =>
     UsersApi.getOne(user)
   );
-  const { mutate, isLoading: isOngoing } = useMutation(InvitationsApi.delete);
+  const { update } = useTeamData();
+  console.log(team, 'team');
+  const { mutate, isLoading: isOngoing } = useMutation(async (data) => {
+    await update(team._id.toString(), data);
+    await refresh();
+  });
   console.log("DATAAAAA", data);
+  console.log(user, 'd', user);
+  const handleDelete = () => {
+    mutate({
+      removeUser: user
+    });
+  }
+  if (isLoading) return <div>Loading...</div>;
   return (
     <Grid container spacing={1}>
-      <Grid item md={12} lg={12} sm={12} key={user._id}>
+      <Grid item md={12} lg={12} sm={12} key={user}>
         <Card
           sx={{
             maxHeight: 400,
@@ -65,7 +73,7 @@ const TeamMember = ({ user, refresh }) => {
             </Typography>
             <Typography variant='body2' color='text.secondary'>
               {data?.data?.description}
-              {data?.data?.technologies.map((item) => {
+              {data?.data?.technologies?.map((item) => {
                 return (
                   <Chip
                     key={item}
@@ -86,9 +94,11 @@ const TeamMember = ({ user, refresh }) => {
             <Link href={`/users/${data?.data?._id}`}>
               <Button size='small'>Profile</Button>
             </Link>
-            <Button onClick={() => mutate(user)} disabled={isOngoing}>
-              Remove
-            </Button>
+            {isOwner && (
+              <Button onClick={handleDelete} disabled={isOngoing}>
+                Remove
+              </Button>
+            )}
           </CardActions>
         </Card>
       </Grid>
@@ -211,10 +221,10 @@ function TeamProfile() {
       <div className={styles.technologies}>
         Members
         <div className={styles.credentials}>
-          {id !== "new" && isOwner && (
+          {id !== "new" && (
             <div>
               {teamData?.users?.map((user) => (
-                <TeamMember user={user} key={user} refresh={refetchTeam} />
+                <TeamMember team={teamData} user={user} key={user} refresh={refetchTeam} isOwner={isOwner} />
               ))}
             </div>
           )}

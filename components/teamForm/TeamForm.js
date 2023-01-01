@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 export default function TeamForm({ properties = {}, isEdit = false }) {
   const { create, update } = useTeams();
   const { refetch } = useUser();
-  const [teamName, setTeamName] = useState(properties.teamName);
+  const [teamName, setTeamName] = useState(properties.name);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [description, setDescription] = useState(properties.description);
@@ -28,6 +28,9 @@ export default function TeamForm({ properties = {}, isEdit = false }) {
 
     promise
       .then((data) => {
+        if (!data.insertedId) {
+          throw new Error(data.message);
+        }
         refetch();
         push("/teams/" + data.insertedId);
       })

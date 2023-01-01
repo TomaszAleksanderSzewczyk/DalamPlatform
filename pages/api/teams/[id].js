@@ -44,6 +44,7 @@ export default nc()
     const description = req.body.description;
     const users = req.body.users;
     const avatar = req.body.avatar;
+    const removeUser = req.body.removeUser;
     const technologies = req.body.technologies;
 
     const client = await connectToDatabase();
@@ -51,6 +52,7 @@ export default nc()
     const usersCollection = client.db().collection("users");
     const teamsCollection = client.db().collection("teams");
 
+    const team = await teamsCollection.findOne({ _id: ObjectId(id) });
     const user = await usersCollection.findOne({ email });
     const update = {};
     
@@ -68,9 +70,11 @@ export default nc()
       update.technologies = technologies;
     }
 
+    if (removeUser) {
+      update.users = team.users.filter((user) => user.toString() !== removeUser);
+    }
 
-    
-    console.log(update)
+    console.log("users", team.users, update);
 
     if (users) {
       console.log("users");
@@ -87,12 +91,12 @@ export default nc()
       }
       update.users = users;
     }
-
-    const team = await teamsCollection.findOne({ name });
+    console.log("users", update);
 
     // if name is being updated
-    if (name) {
-      if (team) {
+    if (name && name !== team.name) {
+      const exists = await teamsCollection.findOne({ name });
+      if (team && exists._id.toString() !== id) {
         res
           .status(400)
           .json({ message: "Team with this name already exists!" });
