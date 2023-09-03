@@ -8,77 +8,86 @@ import {
   CardActions,
   Button,
   Chip,
+  Box,
+  useMediaQuery,
 } from "@mui/material";
 import Link from "next/link";
 import useUsers from "../../hooks/useUsers";
 
-import styles from "../../styles/usersList.module.css";
-export default function Teams() {
-  const [users, setUsers] = useState();
-  const { getAll } = useUsers();
-  useEffect(() => {
-    getAll().then((data) => setUsers(data));
-  }, []);
+import styles from "../../styles/teams.module.css"; 
 
-  console.log(users, "test");
+export default function Users() {
+  const [users, setUsers] = useState([]);
+  const { getAll } = useUsers();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  useEffect(() => {
+    async function fetchUsersData() {
+      try {
+        const data = await getAll();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users data:", error);
+      }
+    }
+
+    fetchUsersData();
+  }, []);
 
   return (
     <div className={styles.center}>
-      <Grid container spacing={1}>
-        {users?.map((user) => {
-          return (
-            <Grid item md={6} lg={6} sm={12} key={user._id}>
-              <Card
-                sx={{
-                  maxWidth: 700,
-                  maxHeight: 400,
-                  background: "#F3F2EF",
-                }}
-              >
-                <CardMedia
-                  component='img'
-                  height='160'
-                  image={
-                    user.avatar
-                      ? user.avatar
-                      : "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg"
-                  }
-                  alt='green iguana'
-                />
-                <CardContent>
-                  <Typography gutterBottom variant='h5' component='div'>
-                    {!user.firstName || !user.lastName
-                      ? `User ${user._id}`
-                      : `${user.firstName} ${user.lastName}`}
-                  </Typography>
-                  <Typography variant='body2' color='text.secondary'>
-                    {user.description}
-                    {user?.technologies?.map((item) => {
-                      return (
-                        <Chip
-                          key={item}
-                          sx={{
-                            marginLeft: 1,
-                            marginBottom: 1,
-                            width: 100,
-                            fontSize: 16,
-                          }}
-                          color='primary'
-                          label={item}
-                        />
-                      );
-                    })}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Link href={`/users/${user._id}`}>
-                    <Button size='small'>Profile</Button>
-                  </Link>
-                </CardActions>
-              </Card>
-            </Grid>
-          );
-        })}
+      <Grid container spacing={2}>
+        {users?.map((user) => (
+          <Grid item md={6} lg={4} sm={12} key={user._id}>
+            <Card
+              className={styles.card} 
+              sx={{
+                maxWidth: isMobile ? 300 : 700,
+                background: "#F3F2EF",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="160"
+                image={
+                  user.avatar ||
+                  "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg"
+                }
+                alt="User Avatar"
+              />
+              <CardContent sx={{ flex: 1 }}>
+                <Typography gutterBottom variant="h5" component="div">
+                  {!user.firstName || !user.lastName
+                    ? `User ${user._id}`
+                    : `${user.firstName} ${user.lastName}`}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {user.description}
+                </Typography>
+                <Box sx={{ mt: 1 }}>
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    {user?.technologies?.map((item) => (
+                      <Chip
+                        key={item}
+                        sx={{
+                          marginRight: 1,
+                          marginBottom: 1,
+                          fontSize: isMobile ? 12 : 14,
+                          textAlign: "center", // Wyśrodkuj tekst wewnątrz Chip
+                        }}
+                        color="primary"
+                        label={item}
+                      />
+                    ))}
+                  </div>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </div>
   );
