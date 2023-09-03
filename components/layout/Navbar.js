@@ -1,4 +1,6 @@
-import * as React from "react";
+import React, { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -6,127 +8,108 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/router";
 import Link from "next/link";
-import styles from "./Navbar.module.css";
-import useUserData from "../../hooks/useUser";
+
 export function Navbar() {
-  const { userData, isLogged } = useUserData();
-  console.log(isLogged);
+  const { data: session } = useSession();
   const router = useRouter();
-  const { refetch } = useUserData();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogOut = async () => {
-    await signOut({
-      redirect: false,
+    await fetch("/api/auth/logout", {
+      method: "POST",
     });
-    refetch();
-    setTimeout(() => {
-      router.push("/login");
-    }, 100);
+    router.push("/login");
   };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='static'>
+      <AppBar position="static">
         <Toolbar>
           <IconButton
-            size='large'
-            edge='start'
-            color='inherit'
-            aria-label='menu'
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             DALAM
           </Typography>
-          {isLogged && (
-            <Link href='/profile/invitations'>
+          {session ? (
+            <div>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() => router.push("/profile/invitations")}
               >
                 Invitations
               </Button>
-            </Link>
-          )}
-
-          {isLogged && (
-            <Link href={`/teams/${userData?.team || "new"}`}>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() =>
+                  router.push(`/teams/${session.user.team || "new"}`)
+                }
               >
-                {userData?.team ? "my Team" : "create team"}
+                {session.user.team ? "My Team" : "Create Team"}
               </Button>
-            </Link>
-          )}
-          {isLogged && (
-            <Link href='/profile'>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() => router.push("/profile")}
               >
                 Profile
               </Button>
-            </Link>
-          )}
-          {isLogged && (
-            <Link href='/users'>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() => router.push("/users")}
               >
                 Users
               </Button>
-            </Link>
-          )}
-          {isLogged && (
-            <Link href='/teams'>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() => router.push("/teams")}
               >
                 Teams
               </Button>
-            </Link>
-          )}
-          {isLogged && (
-            <Link href='/tasks'>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() => router.push("/tasks")}
               >
                 Tasks
               </Button>
-            </Link>
-          )}
-
-          {isLogged && (
-            <Link href='/settings'>
               <Button
-                sx={{ backgroundColor: "white", color: "black", border: 3 }}
-                color='inherit'
+                variant="outlined"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={() => router.push("/settings")}
               >
                 Settings
               </Button>
-            </Link>
-          )}
-          {isLogged ? (
-            <Link href='/login'>
               <Button
-                sx={{ border: 3, borderColor: "black" }}
+                variant="outlined"
+                color="inherit"
                 onClick={handleLogOut}
-                color='inherit'
               >
                 Logout
               </Button>
-            </Link>
+            </div>
           ) : (
-            <Link href='/login'>
-              <Button sx={{ border: 3, borderColor: "black" }} color='inherit'>
+            <Link href="/login" passHref>
+              <Button variant="outlined" color="inherit">
                 Login
               </Button>
             </Link>
